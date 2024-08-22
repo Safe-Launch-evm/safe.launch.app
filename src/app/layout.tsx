@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Bricolage_Grotesque } from 'next/font/google';
+import { Bricolage_Grotesque, Inter } from 'next/font/google';
 import './globals.css';
 
 const bricolage = Bricolage_Grotesque({
@@ -7,6 +7,12 @@ const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   weight: ['200', '300', '400', '500', '600', '700', '800'],
   variable: '--font-bricolage'
+});
+
+const inter = Inter({
+  style: 'normal',
+  subsets: ['latin'],
+  variable: '--font-inter'
 });
 
 export const metadata: Metadata = {
@@ -22,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`min-h-screen bg-background font-bricolage text-foreground antialiased ${bricolage.variable}`}
+        className={`min-h-screen bg-background font-bricolage text-foreground antialiased ${bricolage.variable} ${inter.variable}`}
       >
         {children}
       </body>

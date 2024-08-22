@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Button } from '../ui/button';
 
 export default function SiteHeader() {
   return (
@@ -9,9 +10,10 @@ export default function SiteHeader() {
           <Image src={'/logo.svg'} alt="logo" width={81} height={41} priority />
         </Link>
 
-        <button className="flex items-center justify-center gap-2 rounded-lg border bg-primary p-3 text-[1.5rem] font-bold">
+        <Button> Connect wallet</Button>
+        {/* <button className="flex items-center justify-center gap-2 rounded-lg border bg-primary p-3 text-[1.5rem] font-bold">
           Connect wallet
-        </button>
+        </button> */}
       </div>
     </header>
   );

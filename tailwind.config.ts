@@ -49,7 +49,8 @@ const config = {
         }
       },
       fontFamily: {
-        bricolage: ['var(--font-bricolage)']
+        bricolage: ['var(--font-bricolage)'],
+        inter: ['var(--font-inter)']
       },
       // borderRadius: {
       //   lg: "var(--radius)",
