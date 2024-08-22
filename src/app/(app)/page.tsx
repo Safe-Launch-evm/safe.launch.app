@@ -1,82 +1,77 @@
+import { MainTab } from '@/components/filter-tabs';
+import { Shell } from '@/components/shell';
+import { Button } from '@/components/ui/button';
+// import { Star } from "iconsax-react"
+import { Search, Star, SortDescIcon } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import Banner from './_components/banner';
+import TokenCard from '@/components/cards/token-card';
 
-export default function Home() {
+type HomeProps = {
+  searchParams: { tab: string };
+};
+
+export default function Home({ searchParams }: HomeProps) {
+  const currentTab = searchParams.tab === undefined ? 'tokens' : searchParams.tab;
+
   return (
-    <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-sans sm:p-20">
-      <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-center font-mono text-sm sm:text-left">
-          <li className="mb-2">
-            Get started by editing{' '}
-            <code className="rounded bg-black/[.05] px-1 py-0.5 font-semibold dark:bg-white/[.06]">
-              src/app/page.tsx
-            </code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <a
-            className="flex h-10 items-center justify-center gap-2 rounded-full border border-solid border-transparent bg-foreground px-4 text-sm text-background transition-colors hover:bg-[#383838] sm:h-12 sm:px-5 sm:text-base dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="flex h-10 items-center justify-center rounded-full border border-solid border-black/[.08] px-4 text-sm transition-colors hover:border-transparent hover:bg-[#f2f2f2] sm:h-12 sm:min-w-44 sm:px-5 sm:text-base dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <Shell className="pt-[220px]">
+      <section className="flex flex-col-reverse items-center justify-center gap-10 lg:flex-row lg:justify-between xl:gap-[213px]">
+        <div className="space-y-10">
+          <div className="space-y-6">
+            <h1 className="text-[2rem] font-bold xl:text-[4.25rem]">
+              The Future of Fair and Safe Token Creation
+            </h1>
+            <p className="text-[1rem]/[2rem] tracking-[0.0125rem] lg:text-[1.25rem]/[2rem]">
+              SafeLaunch ensures every token is fair-launched with no presale and no team
+              allocation. Join us in making the crypto space safer and more transparent for
+              everyone.
+            </p>
+          </div>
+          <Button variant={'secondary'}>Create token</Button>
         </div>
-      </main>
-      <footer className="row-start-3 flex flex-wrap items-center justify-center gap-6">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image aria-hidden src="/file-text.svg" alt="File icon" width={16} height={16} />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image aria-hidden src="/window.svg" alt="Window icon" width={16} height={16} />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image aria-hidden src="/globe.svg" alt="Globe icon" width={16} height={16} />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        <div className="px-4">
+          <Banner name="SafeCoin" image="/images/banner.png" market_cap={28.22} href="/" />
+        </div>
+      </section>
+
+      <section className="flex w-full flex-col items-center justify-between gap-4 py-6 lg:flex-row">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-4 rounded-lg border border-card-foreground bg-card p-2">
+            <MainTab selected={currentTab} />
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-4 top-4 size-6 text-muted" />
+            <input
+              type="search"
+              placeholder="Search anything...."
+              className="font-inter w-full max-w-[434px] rounded-lg border border-border bg-card px-4 py-3 pl-11 text-[1.25rem] placeholder:text-[#CECECE]"
+            />
+          </div>
+          <div className="flex size-[44px] items-center justify-center rounded-full border bg-primary lg:size-[54px]">
+            <SortDescIcon size={22} />
+          </div>
+        </div>
+      </section>
+      <section className="space-y-10">
+        <h2 className="text-[1.5rem] font-bold lg:text-[2.5rem]">Tokens</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-7 xl:grid-cols-5">
+          {[...Array(25)].map((_, index) => (
+            <TokenCard
+              key={index}
+              name={'Safetoken'}
+              symbol={'  SFC'}
+              image={'/images/meme_token.png'}
+              owner={'K.tiki'}
+              market_cap={22.8}
+            />
+          ))}
+        </div>
+      </section>
+    </Shell>
   );
 }
