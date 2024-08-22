@@ -49,7 +49,7 @@ export default function Home({ searchParams }: HomeProps) {
             <input
               type="search"
               placeholder="Search anything...."
-              className="font-inter w-full max-w-[434px] rounded-lg border border-border bg-card px-4 py-3 pl-11 text-[1.25rem] placeholder:text-[#CECECE]"
+              className="w-full max-w-[434px] rounded-lg border border-border bg-card px-4 py-3 pl-11 font-inter text-[1.25rem] placeholder:text-[#CECECE]"
             />
           </div>
           <div className="flex size-[44px] items-center justify-center rounded-full border bg-primary lg:size-[54px]">
