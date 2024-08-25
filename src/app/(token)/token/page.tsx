@@ -5,9 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TransactionTable from './_componets/transaction-table';
-import { Copy, CornerUpLeft, Heart, Star } from 'lucide-react';
+import { Copy, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Comment from './_componets/comment';
+import BuyAndSellCard from './_componets/buy-and-sell-card';
 
 export default function TokenPage() {
   return (
@@ -99,6 +100,7 @@ export default function TokenPage() {
               <Copy size={24} />
             </div>
           </div>
+          <BuyAndSellCard />
         </div>
       </div>
     </Shell>

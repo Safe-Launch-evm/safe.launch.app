@@ -13,7 +13,7 @@ const tabListVariants = cva('', {
   variants: {
     variant: {
       default: 'inline-flex items-center justify-start',
-      pill: 'flex justify-center items-start self-stretch border rounded-lg'
+      pill: 'flex w-full  justify-center items-center self-stretch border rounded-lg'
     }
   },
   defaultVariants: {
@@ -41,7 +41,7 @@ const tabTriggerVariants = cva('disabled:pointer-events-none disabled:opacity-50
     variant: {
       default:
         'border-b border-card-foreground flex items-start justify-center  p-3 text-[1rem] font-inter text-muted data-[state=active]:border-primary data-[state=active]:text-primary',
-      pill: 'flex items-center justify-center p-3 gap-2 rounded-lg text-[1.5rem] font-bold data-[state=active]:text-foreground/[0.8] data-[state=active]:bg-secondary'
+      pill: 'flex items-center min-w-[190px] border w-full h-full justify-center p-3 gap-2 rounded-lg text-[1.5rem] font-bold data-[state=active]:text-foreground/[0.8] data-[state=active]:bg-secondary'
     }
   },
   defaultVariants: {

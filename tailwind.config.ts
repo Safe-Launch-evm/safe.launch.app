@@ -15,7 +15,7 @@ const config = {
     extend: {
       colors: {
         border: '#3E3E3E',
-        input: 'hsl(var(--input))',
+        input: '#EEEEEE',
         ring: 'hsl(var(--ring))',
         background: '#E9EAED',
         foreground: '#3E3E3E',
@@ -53,7 +53,8 @@ const config = {
         inter: ['var(--font-inter)']
       },
       boxShadow: {
-        dip: '0px 4px 0px 0px #3E3E3E'
+        dip: '0px 4px 0px 0px #3E3E3E',
+        btn: '0px 0px 0px 2px #3E3E3E'
       },
       // borderRadius: {
       //   lg: "var(--radius)",
