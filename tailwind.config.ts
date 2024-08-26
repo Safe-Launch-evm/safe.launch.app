@@ -28,7 +28,7 @@ const config = {
           foreground: '#3E3E3E'
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
+          DEFAULT: '#C96262',
           foreground: 'hsl(var(--destructive-foreground))'
         },
         muted: {

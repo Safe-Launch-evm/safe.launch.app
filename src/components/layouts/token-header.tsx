@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '../ui/button';
+import { ConnectWalletButton } from '../wallet/wallet-connect';
 
 export default function TokenHeader() {
   return (
@@ -9,7 +10,8 @@ export default function TokenHeader() {
         <Link href="/" className="text-[1.25rem]">
           Back
         </Link>
-        <Button variant={'ghost'} className="font-light">
+        <ConnectWalletButton />
+        {/* <Button variant={'ghost'} className="font-light">
           BsD8ies...
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +22,7 @@ export default function TokenHeader() {
           >
             <path d="M12 16L4 8H20L12 16Z" fill="#80A8BA" />
           </svg>
-        </Button>
+        </Button> */}
       </div>
     </nav>
   );

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '../ui/button';
+// import { Button } from '../ui/button';
+import { ConnectWalletButton } from '../wallet/wallet-connect';
 
 export default function SiteHeader() {
   return (
@@ -9,7 +10,8 @@ export default function SiteHeader() {
         <Link href="/">
           <Image src={'/logo.svg'} alt="logo" width={81} height={41} priority />
         </Link>
-        <Button> Connect wallet</Button>
+        {/* <Button> Connect wallet</Button> */}
+        <ConnectWalletButton />
       </div>
     </nav>
   );
