@@ -15,7 +15,7 @@ const config = {
     extend: {
       colors: {
         border: '#3E3E3E',
-        input: 'hsl(var(--input))',
+        input: '#EEEEEE',
         ring: 'hsl(var(--ring))',
         background: '#E9EAED',
         foreground: '#3E3E3E',
@@ -28,7 +28,7 @@ const config = {
           foreground: '#3E3E3E'
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
+          DEFAULT: '#C96262',
           foreground: 'hsl(var(--destructive-foreground))'
         },
         muted: {
@@ -36,8 +36,8 @@ const config = {
           foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
+          DEFAULT: '#D2DCF1',
+          foreground: '#6100FF'
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
@@ -51,6 +51,10 @@ const config = {
       fontFamily: {
         bricolage: ['var(--font-bricolage)'],
         inter: ['var(--font-inter)']
+      },
+      boxShadow: {
+        dip: '0px 4px 0px 0px #3E3E3E',
+        btn: '0px 0px 0px 2px #3E3E3E'
       },
       // borderRadius: {
       //   lg: "var(--radius)",

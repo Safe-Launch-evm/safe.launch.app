@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+import { cookieToInitialState } from 'wagmi';
+import { getConfig } from '@/lib/wagmi-config';
 import { Bricolage_Grotesque, Inter } from 'next/font/google';
 import './globals.css';
+import { Web3Provider } from '@/components/web3-provider';
 
 const bricolage = Bricolage_Grotesque({
   style: 'normal',
@@ -25,13 +29,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialState = cookieToInitialState(getConfig(), headers().get('cookie'));
+
   return (
-    <html lang="en">
-      <body
-        className={`min-h-screen bg-background font-bricolage text-foreground antialiased ${bricolage.variable} ${inter.variable}`}
-      >
-        {children}
-      </body>
-    </html>
+    <Web3Provider initialState={initialState}>
+      <html lang="en">
+        <body
+          className={`min-h-screen bg-background font-bricolage text-foreground antialiased ${bricolage.variable} ${inter.variable}`}
+        >
+          <div vaul-drawer-wrapper="" className="bg-background">
+            {children}
+          </div>
+        </body>
+      </html>
+    </Web3Provider>
   );
 }

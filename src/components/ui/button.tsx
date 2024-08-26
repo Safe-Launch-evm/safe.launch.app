@@ -5,23 +5,23 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap border rounded-lg text-[1.5rem] font-bold transition-colors disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap gap-2 border rounded-lg text-[1.5rem] font-bold transition-colors disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
         default: 'bg-primary hover:bg-primary/90',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline:
-          'border bg-transparent border-[#4E4E4E]/[0.20] text-muted hover:text-primary hover:border-primary',
+        outline: 'border bg-transparent text-muted hover:text-primary hover:border-primary',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        ghost:
+          'hover:bg-card border border-transparent hover:border-primary hover:text-primary',
         link: 'text-primary underline-offset-4 hover:underline'
       },
       size: {
         default: 'p-3 h-[37px] lg:h-[53px] text-[1rem] lg:text-[1.5rem]',
         sm: 'h-9 rounded-md px-3',
         tab: 'lg:h-[36px] h-6 p-2 lg:p-3 font-medium font-inter text-[1rem] rounded',
-        lg: 'h-11 rounded-md px-8',
+        lg: 'p-3 rounded-lg',
         icon: 'h-10 w-10'
       }
     },
