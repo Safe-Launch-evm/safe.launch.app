@@ -22,7 +22,7 @@ export default function TokenPage() {
               alt=""
               width={150}
               height={150}
-              className="shadow-dip size-[150px] rounded border"
+              className="size-[150px] rounded border shadow-dip"
               priority
             />
 
