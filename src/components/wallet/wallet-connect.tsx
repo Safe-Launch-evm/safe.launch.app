@@ -3,9 +3,7 @@
 import * as React from 'react';
 
 import {
-  WalletModal,
   WalletModalBody,
-  WalletModalContent,
   WalletModalDescription,
   WalletModalFooter,
   WalletModalHeader,
