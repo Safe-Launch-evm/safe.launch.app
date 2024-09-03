@@ -1,18 +1,20 @@
 import { MainTab } from '@/components/filter-tabs';
 import { Shell } from '@/components/shell';
 import { Button } from '@/components/ui/button';
-// import { Star } from "iconsax-react"
 import { Search, Star, SortDescIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Banner from './_components/banner';
 import TokenCard from '@/components/cards/token-card';
+import { getCookieStorage } from '@/lib/cookie-storage';
+import { getUser } from '@/lib/actions/user';
 
 type HomeProps = {
   searchParams: { tab: string };
 };
 
-export default function Home({ searchParams }: HomeProps) {
+export default async function Home({ searchParams }: HomeProps) {
+  const address = await getCookieStorage('accountKey');
   const currentTab = searchParams.tab === undefined ? 'tokens' : searchParams.tab;
 
   return (
@@ -29,7 +31,9 @@ export default function Home({ searchParams }: HomeProps) {
               everyone.
             </p>
           </div>
-          <Button variant={'secondary'}>Create token</Button>
+          <Button variant={'secondary'} asChild>
+            <Link href={'/launch'}>Create token</Link>
+          </Button>
         </div>
 
         <div className="px-4">

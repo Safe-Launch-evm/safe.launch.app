@@ -11,8 +11,8 @@ export function getConfig() {
     chains: [mainnet],
     connectors: [
       injected({ target: 'metaMask' }),
-      coinbaseWallet(),
-      walletConnect({ projectId })
+      coinbaseWallet()
+      // walletConnect({ projectId })
     ],
     ssr: true,
     storage: createStorage({

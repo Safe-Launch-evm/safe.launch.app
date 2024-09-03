@@ -45,6 +45,7 @@ const config = {
         },
         card: {
           DEFAULT: '#EEEEEE',
+          200: 'E3E3E3',
           foreground: '#D9D9D9'
         }
       },
