@@ -1,4 +1,4 @@
-import { number, z } from 'zod';
+import { z } from 'zod';
 
 export const createTokenSchema = z.object({
   name: z.string().min(1, { message: 'Please provide a name for your token' }),

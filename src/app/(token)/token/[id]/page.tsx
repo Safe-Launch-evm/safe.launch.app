@@ -4,11 +4,11 @@ import { SocialIcon, SocialIconType } from '@/components/social-icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import TransactionTable from './_componets/transaction-table';
+import TransactionTable from './_components/transaction-table';
 import { Copy, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Comment from './_componets/comment';
-import BuyAndSellCard from './_componets/buy-and-sell-card';
+import Comment from './_components/comment';
+import BuyAndSellCard from './_components/buy-and-sell-card';
 
 export default function TokenPage() {
   return (

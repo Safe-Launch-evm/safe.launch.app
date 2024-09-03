@@ -17,12 +17,14 @@ import {
   useDisconnect,
   useEnsAvatar,
   useEnsName,
-  useBalance
+  useBalance,
+  useSignMessage
 } from 'wagmi';
 import { formatEther } from 'viem';
 import { Check, ChevronLeft, Copy, RotateCcw } from 'lucide-react';
 import { WalletContext } from '@/context/wallet-context';
 import { Icon } from '../icons';
+import { getNonce, verifyNonce } from '@/lib/actions/user';
 
 const MODAL_CLOSE_DURATION = 320;
 
@@ -64,7 +66,6 @@ function Account() {
   const { data: ensName } = useEnsName({ address });
   const { data: userBalance } = useBalance({ address });
   const context = React.useContext(WalletContext);
-
   const formattedAddress = address?.slice(0, 6) + '•••' + address?.slice(-4);
   const formattedUserBalace = userBalance?.value
     ? parseFloat(formatEther(userBalance.value)).toFixed(4)
@@ -79,6 +80,19 @@ function Account() {
 
   return (
     <>
+      {/* <WalletModalHeader>
+        <WalletModalTitle className="text-left text-[18px]/[18px] font-bold">
+          Setup profile
+        </WalletModalTitle>
+        <WalletModalDescription className="sr-only">
+          Profile modal to edit profile.
+        </WalletModalDescription>
+      </WalletModalHeader>
+      <WalletModalBody className="h-full">
+        <div className="w-full">
+          <RegisterUserForm />
+        </div>
+      </WalletModalBody> */}
       <WalletModalHeader>
         <WalletModalTitle>Connected</WalletModalTitle>
         <WalletModalDescription className="sr-only">
@@ -229,6 +243,120 @@ function WalletOption(props: { connector: Connector; onClick: () => void }) {
       </div>
       {ready ? <Icon.arrowRight className="size-6" /> : null}
     </button>
+  );
+}
+
+function AuthSignMessage() {
+  const { address } = useAccount();
+  const formattedAddress = address?.slice(0, 6) + '•••' + address?.slice(-4);
+  const context = React.useContext(WalletContext);
+
+  // Add the useSignMessage hook
+  const { data, isError, isSuccess, signMessage } = useSignMessage();
+  async function fetchNonce({ address }: { address: string }) {
+    const nonce: any = await getNonce({ address });
+    console.log('before', address);
+
+    if (nonce.code === 200) {
+      console.log('after', nonce);
+      signMessage({
+        message: `Signing into SafeLaunch: ${nonce.result}`
+      }); // Call signMessage here
+      console.log('si', address);
+      console.log('done');
+    }
+  }
+
+  React.useEffect(() => {
+    if (address) {
+      fetchNonce({ address });
+    }
+  }, [address]);
+
+  async function verify({ address, data }: { address: string; data: any }) {
+    const token = await verifyNonce({ address, sig: data });
+    if (token) {
+      context.setOpenAuthDialog(false);
+    }
+  }
+
+  React.useEffect(() => {
+    if (address && isSuccess) {
+      console.log('add', address);
+      verify({ address, data });
+    }
+  }, [address, isSuccess]);
+
+  // React.useEffect(() => {
+  //   async function handleAuth() {
+  //     if (!address) return;
+
+  //     try {
+  //       const nonceResponse = await getNonce({ address });
+  //       if (nonceResponse.code !== 200) {
+  //         console.error('Failed to get nonce:', nonceResponse);
+  //         return;
+  //       }
+
+  //       const signature = signMessage({
+  //         message: `Signing into SafeLaunch: ${nonceResponse.result}`
+  //       });
+
+  //       if (isSuccess) {
+  //         const token = await verifyNonce({ address, sig: data });
+  //         if (token) {
+  //           context.setOpenAuthDialog(false);
+  //         } else {
+  //           console.error('Failed to verify nonce');
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Authentication error:', error);
+  //     }
+  //   }
+
+  //   handleAuth();
+  // }, [address, signMessage, isSuccess, data, context]);
+
+  console.log('sig', data);
+
+  // [address, signMessage, isSuccess, data, context]
+
+  return (
+    <>
+      <WalletModalHeader>
+        <BackChevron />
+        <WalletModalTitle>Sign in to Safelaunch</WalletModalTitle>
+        <WalletModalDescription className="sr-only">Sign your account.</WalletModalDescription>
+      </WalletModalHeader>
+      <WalletModalBody>
+        <div className="flex w-full flex-col items-center justify-center gap-9 md:pt-5">
+          <div className="relative flex size-[116px] items-center justify-center rounded-2xl border p-3">
+            <img
+              className="size-full overflow-hidden rounded-2xl"
+              src={`https://avatar.vercel.sh/${address}?size=150`}
+              alt="User gradient avatar"
+            />
+            <img />
+            {isError ? <RetryConnectorButton /> : null}
+          </div>
+
+          <div className="space-y-3.5 px-3.5 text-center sm:px-0">
+            <h1 className="text-xl font-semibold">
+              {isError ? 'Request Error' : 'Requesting signing'}
+            </h1>
+            <p className="text-balance text-sm text-muted-foreground">
+              {isError
+                ? 'There was an error with the request. Click above to try again.'
+                : `Sign the request to confirm your wallet.`}
+            </p>
+          </div>
+        </div>
+      </WalletModalBody>
+      <WalletModalFooter>
+        <div className="h-0" />
+      </WalletModalFooter>
+    </>
   );
 }
 
@@ -415,4 +543,4 @@ function useWallet() {
   };
 }
 
-export { ConnectWalletButton, useWallet, WalletConnectors, Account };
+export { ConnectWalletButton, useWallet, WalletConnectors, Account, AuthSignMessage };

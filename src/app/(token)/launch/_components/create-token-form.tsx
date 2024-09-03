@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import Form, { useZodForm } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { ConnectWalletButton } from '@/components/wallet/wallet-connect';
+import { WalletContext } from '@/context/wallet-context';
 import { formatBytes, truncate } from '@/lib/utils';
 import { CreateTokenInput, createTokenSchema } from '@/lib/validations/create-token-schema';
 import { STATE_STATUS } from '@/types';
@@ -12,25 +14,29 @@ import { ChevronLeft, FileImage, ImagePlus, LoaderCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { useAccount } from 'wagmi';
 
 interface FormSectionProps {
   [key: string]: React.ReactNode;
 }
 
 export const CreateTokenFrom = () => {
+  // const { address } = useAccount();
+  // const { pendingConnector } = React.useContext(WalletContext);
   const [data, setData] = React.useState<CreateTokenInput>();
   const [status, setStatus] = React.useState(STATE_STATUS.IDLE);
   const [isPending, startTransition] = React.useTransition();
   const [component, setComponent] = React.useState<number>(0);
+  // const isConnected = address && !pendingConnector;
 
   const form = useZodForm({
     schema: createTokenSchema,
     defaultValues: { ...data }
   });
 
-  const image = form.watch('image');
-
   function AddTokenForm() {
+    const image = form.watch('image');
+
     function onSubmit(data: CreateTokenInput) {
       console.log(data);
       setData(data);
