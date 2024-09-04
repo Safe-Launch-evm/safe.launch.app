@@ -3,7 +3,8 @@ import { z } from 'zod';
 const socialLinksSchema = z.object({
   website: z.string().optional(),
   twitter: z.string().optional(),
-  discord: z.string().optional()
+  discord: z.string().optional(),
+  telegram: z.string().optional()
 });
 
 export const createTokenSchema = z.object({
