@@ -6,41 +6,90 @@ import Form, { useZodForm } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ConnectWalletButton } from '@/components/wallet/wallet-connect';
+import { handleDelete } from '@/config/cloud';
 import { WalletContext } from '@/context/wallet-context';
+import { createToken, uploadLogo } from '@/lib/actions/token';
+import client from '@/lib/client';
 import { formatBytes, truncate } from '@/lib/utils';
 import { CreateTokenInput, createTokenSchema } from '@/lib/validations/create-token-schema';
 import { STATE_STATUS } from '@/types';
-import { ChevronLeft, FileImage, ImagePlus, LoaderCircle } from 'lucide-react';
+import {
+  ChevronLeft,
+  Circle,
+  CircleX,
+  Delete,
+  FileImage,
+  ImagePlus,
+  LoaderCircle,
+  X
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { FormEvent, useEffect } from 'react';
+import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
 interface FormSectionProps {
   [key: string]: React.ReactNode;
 }
 
+type ImageProps = {
+  url: string;
+  image: string;
+};
+
 export const CreateTokenFrom = () => {
-  // const { address } = useAccount();
-  // const { pendingConnector } = React.useContext(WalletContext);
-  const [data, setData] = React.useState<CreateTokenInput>();
+  const { address } = useAccount();
+  const { pendingConnector } = React.useContext(WalletContext);
+  // const [input, setInput] = React.useState<CreateTokenInput>();
   const [status, setStatus] = React.useState(STATE_STATUS.IDLE);
+  const [uploadStatus, setUploadStatus] = React.useState(STATE_STATUS.IDLE);
   const [isPending, startTransition] = React.useTransition();
   const [component, setComponent] = React.useState<number>(0);
-  // const isConnected = address && !pendingConnector;
+  const [imageSrc, setImageSrc] = React.useState<ImageProps | null>(null);
+  const isConnected = address && !pendingConnector;
 
   const form = useZodForm({
     schema: createTokenSchema,
-    defaultValues: { ...data }
+    defaultValues: { contractAddress: address }
   });
 
-  function AddTokenForm() {
-    const image = form.watch('image');
+  const { setValue } = form;
 
+  useEffect(() => {
+    if (imageSrc) {
+      setValue('logoUrl', imageSrc.url);
+    }
+  }, [imageSrc, setValue]);
+
+  function AddTokenForm() {
     function onSubmit(data: CreateTokenInput) {
-      console.log(data);
-      setData(data);
-      setComponent(1);
+      if (imageSrc?.url) {
+        // setInput({ ...data, logoUrl: imageSrc.url });
+        setComponent(1);
+      }
+    }
+
+    async function onUpload(formData: any) {
+      setUploadStatus(STATE_STATUS.LOADING);
+      try {
+        const uploaded = await uploadLogo(formData);
+        if (uploaded.status !== 201) {
+          setImageSrc(null);
+          setUploadStatus(STATE_STATUS.ERROR);
+        }
+        setImageSrc(uploaded.result);
+        setUploadStatus(STATE_STATUS.SUCCESS);
+      } catch (error) {
+        setImageSrc(null);
+        setUploadStatus(STATE_STATUS.ERROR);
+      }
+    }
+
+    async function onDeleteImage() {
+      if (imageSrc) {
+        await handleDelete(imageSrc.image);
+      }
     }
     return (
       <Form form={form} onSubmit={form.handleSubmit(onSubmit)} className="md:w-[570px]">
@@ -50,29 +99,55 @@ export const CreateTokenFrom = () => {
           <div className="flex items-center justify-center gap-4 pr-4">
             <label
               htmlFor="file-upload"
-              className="relative flex size-[64px] cursor-pointer items-center justify-center rounded-lg border"
+              className="relative flex size-[64px] cursor-pointer items-center justify-center rounded-lg border disabled:cursor-not-allowed"
             >
-              {image ? (
+              {imageSrc ? (
                 <Image
-                  src={URL.createObjectURL(image[0])}
-                  alt={image[0].name}
+                  src={imageSrc.url}
+                  alt="pre image uplod"
                   width={64}
                   height={64}
                   className="size-[64px] rounded-lg bg-cover bg-center bg-no-repeat"
                 />
               ) : (
-                <ImagePlus size={35} />
+                <>
+                  {uploadStatus === STATE_STATUS.LOADING ? (
+                    <LoaderCircle size={35} className="animate-spin" />
+                  ) : uploadStatus === STATE_STATUS.ERROR ? (
+                    <CircleX size={35} />
+                  ) : (
+                    <ImagePlus size={35} />
+                  )}
+                </>
               )}
               <Input
                 id="file-upload"
                 type="file"
                 className="sr-only"
+                disabled={!isConnected}
                 {...form.register('image')}
+                onChange={(e: any) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    onUpload(formData);
+                  }
+                }}
               />
+              {imageSrc ? (
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="group absolute -bottom-2 -right-2 rounded-full bg-muted p-1.5 shadow"
+                  onClick={onDeleteImage}
+                >
+                  <Delete className="size-4 transition-transform" />
+                </Button>
+              ) : null}
             </label>
             <div className="flex flex-col gap-1 text-[1.125rem]">
-              <span> {image ? truncate(image[0].name, 32) : 'PNG, JPEG, max 5MB'}</span>
-              {image ? <span>{formatBytes(image[0].size)}</span> : null}
+              <span> {imageSrc ? truncate(imageSrc.image, 32) : 'PNG, JPEG, max 5MB'}</span>
             </div>
           </div>
         </div>
@@ -88,28 +163,50 @@ export const CreateTokenFrom = () => {
             helpertext="200 max"
             {...form.register('description')}
           />
-          <Input label="Website" name="" placeholder="(optional)" />
-          <Input label="Telegram" name="" placeholder="optional" />
-          <Input label="Twitter" name="" placeholder="optional" />
+          <Input
+            label="Website"
+            placeholder="(optional)"
+            {...form.register('socialLinks.website')}
+          />
+          <Input
+            label="Discord"
+            placeholder="optional"
+            {...form.register('socialLinks.discord')}
+          />
+          <Input
+            label="Twitter"
+            placeholder="optional"
+            {...form.register('socialLinks.twitter')}
+          />
         </div>
         <div className="flex w-full items-center justify-center px-8 py-6">
-          <Button fullWidth>Create Token</Button>
+          {isConnected ? <Button fullWidth>Create Token</Button> : <ConnectWalletButton />}
         </div>
       </Form>
     );
   }
 
   function AddLiquidity() {
-    function handleClick() {
+    async function handleClick() {
       setComponent(0);
     }
 
-    function onSubmit(data: CreateTokenInput) {
+    async function onSubmit(data: CreateTokenInput) {
       setStatus(STATE_STATUS.LOADING);
-      startTransition(() => {
-        console.log(data);
+      try {
+        const result = await createToken(data);
+        if (!result) {
+          setStatus(STATE_STATUS.ERROR);
+          toast.error('Opps!', { description: 'An error occurred' });
+          return;
+        }
         setStatus(STATE_STATUS.SUCCESS);
-      });
+      } catch (error) {
+        setComponent(0);
+        setStatus(STATE_STATUS.ERROR);
+        toast.error('Opps!', { description: 'An error occurred' });
+        return;
+      }
     }
 
     return (
@@ -134,10 +231,14 @@ export const CreateTokenFrom = () => {
             <Input
               className="border-none px-0 py-3 focus:outline-none"
               placeholder="0.00 (Optional)"
+              {...form.register('totalSupply')}
             />
           </div>
           <div className="flex w-full items-center justify-center py-6">
-            <Button fullWidth>
+            <Button
+              fullWidth
+              disabled={!form.formState.isDirty || !form.formState.isValid || isPending}
+            >
               {isPending && status === STATE_STATUS.LOADING ? (
                 <LoaderCircle size={20} />
               ) : null}

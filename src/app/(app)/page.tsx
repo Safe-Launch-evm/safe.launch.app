@@ -8,14 +8,20 @@ import Banner from './_components/banner';
 import TokenCard from '@/components/cards/token-card';
 import { getCookieStorage } from '@/lib/cookie-storage';
 import { getUser } from '@/lib/actions/user';
+import { fetchTokens } from '@/lib/actions/token';
 
 type HomeProps = {
   searchParams: { tab: string };
 };
 
 export default async function Home({ searchParams }: HomeProps) {
-  const address = await getCookieStorage('accountKey');
+  // const address = await getCookieStorage('accountKey');
   const currentTab = searchParams.tab === undefined ? 'tokens' : searchParams.tab;
+  const favorites = currentTab === 'favorites' ? true : false;
+
+  const tokens = await fetchTokens({ favorites });
+
+  console.log(tokens);
 
   return (
     <Shell className="pt-[220px]">
@@ -64,16 +70,22 @@ export default async function Home({ searchParams }: HomeProps) {
       <section className="space-y-10">
         <h2 className="text-[1.5rem] font-bold lg:text-[2.5rem]">Tokens</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-7 xl:grid-cols-5">
-          {[...Array(25)].map((_, index) => (
-            <TokenCard
-              key={index}
-              name={'Safetoken'}
-              symbol={'  SFC'}
-              image={'/images/meme_token.png'}
-              owner={'K.tiki'}
-              market_cap={22.8}
-            />
-          ))}
+          {/* {[...Array(25)].map((_, index) => ( */}
+          {tokens?.map(token => {
+            return (
+              <TokenCard
+                key={token.unique_id}
+                unique_id={token.unique_id}
+                name={token.name}
+                symbol={token.symbol}
+                image={token.logo_url}
+                owner={'K.tiki'}
+                market_cap={22.8}
+              />
+            );
+          })}
+
+          {/* ))} */}
         </div>
       </section>
     </Shell>

@@ -9,30 +9,49 @@ import { Copy, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Comment from './_components/comment';
 import BuyAndSellCard from './_components/buy-and-sell-card';
+import { fetchSingleToken } from '@/lib/actions/token';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { PlaceholderImage } from '@/components/placeholder-image';
 
-export default function TokenPage() {
+export default async function TokenPage({ params }: { params: { id: string } }) {
+  const token = await fetchSingleToken(params.id);
+  console.log(token);
   return (
     <Shell className="min-h-screen pt-[160px]">
       <div className="flex flex-col gap-8 md:flex-row md:gap-10">
         {/* details */}
         <div className="flex w-full flex-col gap-10 md:w-3/4">
           <div className="flex items-start gap-4 self-stretch rounded border border-card-foreground bg-card p-4">
-            <Image
-              src={'/images/meme_token.png'}
-              alt=""
-              width={150}
-              height={150}
-              className="size-[150px] rounded border shadow-dip"
-              priority
-            />
+            {token?.logo_url ? (
+              <Image
+                src={token.logo_url ?? '/images/token-placeholder.webp'}
+                alt={`${token.name}-${token.symbol}`}
+                width={150}
+                height={150}
+                className="size-[150px] rounded border shadow-dip"
+                priority
+              />
+            ) : (
+              <PlaceholderImage className="rounded-none" asChild />
+            )}
+            {/* <AspectRatio ratio={5 / 5}>
+              {token?.logo_url ? (
+                <Image
+                  src={token.logo_url ?? '/images/token-placeholder.webp'}
+                  alt={`${token.name}-${token.symbol}`}
+                  className="rounded-lg object-cover"
+                  sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
+                  fill
+                  loading="lazy"
+                />
+              ) : (
+                <PlaceholderImage className="rounded-none" asChild />
+              )}
+            </AspectRatio> */}
 
             <div className="flex flex-col gap-6 pt-4">
               <h2 className="text-[1.25rem]/[0.0125rem] font-bold">Description</h2>
-              <p className="text-[1.125rem]/[2rem]">
-                Safetoken presents a new era in cryptocurrency, where safety, fairness, and
-                community are at the forefront. Join us in building a secure future for all
-                digital asset enthusiasts.{' '}
-              </p>
+              <p className="text-[1.125rem]/[2rem]">{token?.description}</p>
               <div className="flex items-center justify-end gap-6">
                 <SocialIconLink href="#" icon="xTwitter" name="XTwitter" />
                 <SocialIconLink href="#" icon="youtube" name="Youtube" />
