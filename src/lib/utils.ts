@@ -22,3 +22,10 @@ export function formatBytes(
 export function truncate(str: string, length: number) {
   return str.length > length ? `${str.substring(0, length)}...` : str;
 }
+
+export function formatAddress(address: string) {
+  if (!address) return '';
+  const prefix = address.substring(0, 4); // Take first 6 characters
+  const suffix = address.substring(address.length - 4); // Take last 4 characters
+  return `${prefix}...${suffix}`; // Combine with ellipsis in the middle
+}

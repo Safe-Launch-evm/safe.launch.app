@@ -10,7 +10,7 @@ export async function handleUpload(file: any) {
   const res = await cloudinary.uploader.upload(file, {
     resource_type: 'auto',
     upload_preset: 'safe_load',
-    transformation: { width: 500, height: 500 }
+    transformation: { width: 208, height: 150 }
   });
   return res;
 }
