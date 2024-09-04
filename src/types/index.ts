@@ -16,6 +16,10 @@ export type Token = {
   symbol: string;
   logo_url: string;
   social_links: string;
+  creator: {
+    unique_id: string;
+    username: string;
+  };
   created_at: string;
   updated_at: string;
 };

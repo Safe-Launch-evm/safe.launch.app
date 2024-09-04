@@ -15,7 +15,14 @@ import { PlaceholderImage } from '@/components/placeholder-image';
 
 export default async function TokenPage({ params }: { params: { id: string } }) {
   const token = await fetchSingleToken(params.id);
-  console.log(token);
+
+  if (!token) {
+    return;
+  }
+
+  console.log(JSON.parse(token.social_links));
+
+  const social_links = JSON.parse(token.social_links);
   return (
     <Shell className="min-h-screen pt-[160px]">
       <div className="flex flex-col gap-8 md:flex-row md:gap-10">
@@ -34,30 +41,40 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
             ) : (
               <PlaceholderImage className="rounded-none" asChild />
             )}
-            {/* <AspectRatio ratio={5 / 5}>
-              {token?.logo_url ? (
-                <Image
-                  src={token.logo_url ?? '/images/token-placeholder.webp'}
-                  alt={`${token.name}-${token.symbol}`}
-                  className="rounded-lg object-cover"
-                  sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
-                  fill
-                  loading="lazy"
-                />
-              ) : (
-                <PlaceholderImage className="rounded-none" asChild />
-              )}
-            </AspectRatio> */}
 
             <div className="flex flex-col gap-6 pt-4">
               <h2 className="text-[1.25rem]/[0.0125rem] font-bold">Description</h2>
               <p className="text-[1.125rem]/[2rem]">{token?.description}</p>
               <div className="flex items-center justify-end gap-6">
-                <SocialIconLink href="#" icon="xTwitter" name="XTwitter" />
+                {/* <SocialIconLink href={social_links.twitter} icon="xTwitter" name="XTwitter" />
                 <SocialIconLink href="#" icon="youtube" name="Youtube" />
-                <SocialIconLink href="#" icon="discord" name="Discord" />
+                <SocialIconLink href={social_links.discord} icon="discord" name="Discord" />
                 <SocialIconLink href="#" icon="telegram" name="Telegram" />
-                <SocialIconLink href="#" icon="website" name="website name" />
+                <SocialIconLink
+                  href={social_links.website}
+                  icon="website"
+                  name="website name"
+                /> */}
+                {social_links.twitter && (
+                  <SocialIconLink
+                    href={social_links.twitter}
+                    icon="xTwitter"
+                    name="XTwitter"
+                  />
+                )}
+                {social_links.discord && (
+                  <SocialIconLink href={social_links.discord} icon="discord" name="Discord" />
+                )}
+                {social_links.telegram && (
+                  <SocialIconLink
+                    href={social_links.telegram}
+                    icon="telegram"
+                    name="Telegram"
+                  />
+                )}
+                {social_links.website && (
+                  <SocialIconLink href={social_links.website} icon="website" name="Website" />
+                )}
               </div>
             </div>
           </div>
@@ -102,7 +119,7 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
           <div className="flex flex-col items-start gap-4 self-stretch">
             <div className="flex w-full items-center justify-between gap-4">
               <div className="flex flex-col items-start gap-4">
-                <h3 className="text-[1.5rem]/[0.015rem] font-bold">Safetoken</h3>
+                <h3 className="text-[1.5rem]/[0.015rem] font-bold">{token.name}</h3>
                 <div className="flex items-center gap-1">
                   <span> Created by</span>
                   <Link href={''} className="text-primary">
