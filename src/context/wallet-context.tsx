@@ -96,7 +96,7 @@ export default function WalletProvider(props: { children: React.ReactNode }) {
       deleteCookieItem('expires_at');
       deleteCookieItem('accountKey');
     }
-  });
+  }, [status]);
 
   return (
     <WalletContext.Provider

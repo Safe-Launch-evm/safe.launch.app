@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { cookieToInitialState } from 'wagmi';
 import { getConfig } from '@/lib/wagmi-config';
 import { Bricolage_Grotesque, Inter } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 import { Web3Provider } from '@/components/web3-provider';
 
@@ -39,6 +40,7 @@ export default function RootLayout({
         >
           <div vaul-drawer-wrapper="" className="bg-background">
             {children}
+            <Toaster />
           </div>
         </body>
       </html>
