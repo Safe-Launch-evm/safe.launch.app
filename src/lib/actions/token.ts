@@ -42,15 +42,56 @@ type FetchTokenResponse = {
   result: Token[];
 };
 
-export async function fetchToken(): Promise<Token[] | null> {
+// export async function fetchToken({}): Promise<Token[] | null> {
+//   try {
+//     const token = await getCookieStorage('auth_token');
+//     const tokens: FetchTokenResponse = await client(`/tokens?trending=true&favorites=true`, {
+//       token: token,
+//       tag: 'tokens'
+//     });
+//     return tokens.result;
+//   } catch (error) {
+//     return [];
+//   }
+// }
+
+export async function fetchTokens({
+  trending = false,
+  favorites = false
+}: {
+  trending?: boolean;
+  favorites?: boolean;
+} = {}): Promise<Token[] | null> {
   try {
     const token = await getCookieStorage('auth_token');
-    const tokens: FetchTokenResponse = await client(`/tokens`, {
+    const queryParams = new URLSearchParams();
+    if (trending) queryParams.append('trending', 'true');
+    if (favorites) queryParams.append('favorites', 'true');
+
+    const tokens: FetchTokenResponse = await client(`/tokens?${queryParams.toString()}`, {
       token: token,
       tag: 'tokens'
     });
+    if (!tokens.result) {
+      return [];
+    }
     return tokens.result;
   } catch (error) {
     return [];
+  }
+}
+export async function fetchSingleToken(tokenId: string): Promise<Token | null> {
+  try {
+    const token: any = await client(`/tokens/${tokenId}`, {
+      tag: 'tokens'
+    });
+    const result = token.result[0];
+
+    if (!result) {
+      return null;
+    }
+    return result;
+  } catch (error) {
+    return null;
   }
 }
