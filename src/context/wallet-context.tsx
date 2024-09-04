@@ -9,7 +9,7 @@ import {
   AuthSignMessage,
   WalletConnectors
 } from '@/components/wallet/wallet-connect';
-import { getCookieStorage, setCookieStorage } from '@/lib/cookie-storage';
+import { deleteCookieItem, getCookieStorage, setCookieStorage } from '@/lib/cookie-storage';
 import { AlertDialog } from '@/components/ui/alert-dialog';
 
 const MODAL_CLOSE_DURATION = 320;
@@ -42,29 +42,6 @@ export default function WalletProvider(props: { children: React.ReactNode }) {
   const [openAuthDialog, setOpenAuthDialog] = React.useState(false);
   const [openUserDialog, setOpenUserDialog] = React.useState(false);
   const isConnected = address && !pendingConnector;
-  const [nonce, setNonce] = React.useState<string | null>(null);
-
-  // Add the useSignMessage hook
-  // const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage();
-
-  // console.log(status);
-  // console.log(pendingConnector);
-
-  // async function fetchNonce() {
-  //   if (address) {
-  //     const nonce: any = await getNonce({ address });
-  //     console.log('before', nonce.code);
-
-  //     if (nonce.code === 200) {
-  //       console.log('after', nonce);
-  //       signMessage({
-  //         message: `Signing into SafeLaunch: ${nonce.result}`
-  //       }); // Call signMessage here
-  //     }
-  //   }
-  // }
-
-  // fetchNonce();
 
   React.useEffect(() => {
     if (status === 'connected' && pendingConnector) {
@@ -112,6 +89,14 @@ export default function WalletProvider(props: { children: React.ReactNode }) {
 
     return () => clearTimeout(timeoutId);
   }, [isConnected, setOpenAuthDialog]);
+
+  React.useEffect(() => {
+    if (status === 'disconnected') {
+      deleteCookieItem('auth_token');
+      deleteCookieItem('expires_at');
+      deleteCookieItem('accountKey');
+    }
+  });
 
   return (
     <WalletContext.Provider

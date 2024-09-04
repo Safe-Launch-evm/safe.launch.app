@@ -25,6 +25,7 @@ import { Check, ChevronLeft, Copy, RotateCcw } from 'lucide-react';
 import { WalletContext } from '@/context/wallet-context';
 import { Icon } from '../icons';
 import { getNonce, verifyNonce } from '@/lib/actions/user';
+import { STATE_STATUS } from '@/types';
 
 const MODAL_CLOSE_DURATION = 320;
 
@@ -248,23 +249,24 @@ function WalletOption(props: { connector: Connector; onClick: () => void }) {
 
 function AuthSignMessage() {
   const { address } = useAccount();
-  const formattedAddress = address?.slice(0, 6) + '•••' + address?.slice(-4);
   const context = React.useContext(WalletContext);
-
+  const [status, setStatus] = React.useState<STATE_STATUS>(STATE_STATUS.IDLE);
   // Add the useSignMessage hook
   const { data, isError, isSuccess, signMessage } = useSignMessage();
+
   async function fetchNonce({ address }: { address: string }) {
+    setStatus(STATE_STATUS.LOADING);
     const nonce: any = await getNonce({ address });
     console.log('before', address);
 
-    if (nonce.code === 200) {
-      console.log('after', nonce);
-      signMessage({
-        message: `Signing into SafeLaunch: ${nonce.result}`
-      }); // Call signMessage here
-      console.log('si', address);
-      console.log('done');
+    if (nonce.code !== 200) {
+      setStatus(STATE_STATUS.ERROR);
     }
+    console.log('after', nonce);
+    signMessage({
+      message: `Signing into SafeLaunch: ${nonce.result}`
+    }); // Call signMessage here
+    setStatus(STATE_STATUS.SUCCESS);
   }
 
   React.useEffect(() => {
@@ -274,10 +276,13 @@ function AuthSignMessage() {
   }, [address]);
 
   async function verify({ address, data }: { address: string; data: any }) {
+    setStatus(STATE_STATUS.LOADING);
     const token = await verifyNonce({ address, sig: data });
-    if (token) {
-      context.setOpenAuthDialog(false);
+    if (!token) {
+      setStatus(STATE_STATUS.ERROR);
     }
+    setStatus(STATE_STATUS.SUCCESS);
+    context.setOpenAuthDialog(false);
   }
 
   React.useEffect(() => {
@@ -318,9 +323,28 @@ function AuthSignMessage() {
   //   handleAuth();
   // }, [address, signMessage, isSuccess, data, context]);
 
-  console.log('sig', data);
+  // console.log('sig', data);
 
   // [address, signMessage, isSuccess, data, context]
+
+  const onHandleClick = async () => {
+    if (address) {
+      await fetchNonce({ address });
+    }
+  };
+
+  function RetrySignInButton() {
+    return (
+      <Button
+        size="icon"
+        variant="secondary"
+        className="group absolute -bottom-2 -right-2 rounded-full bg-muted p-1.5 shadow"
+        onClick={onHandleClick}
+      >
+        <RotateCcw className="size-4 transition-transform group-hover:-rotate-45" />
+      </Button>
+    );
+  }
 
   return (
     <>
@@ -338,7 +362,11 @@ function AuthSignMessage() {
               alt="User gradient avatar"
             />
             <img />
-            {isError ? <RetryConnectorButton /> : null}
+            {isError ? (
+              <RetrySignInButton />
+            ) : status === STATE_STATUS.ERROR ? (
+              <RetrySignInButton />
+            ) : null}
           </div>
 
           <div className="space-y-3.5 px-3.5 text-center sm:px-0">
