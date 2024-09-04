@@ -178,6 +178,11 @@ export const CreateTokenFrom = () => {
             placeholder="optional"
             {...form.register('socialLinks.twitter')}
           />
+          <Input
+            label="Telegram"
+            placeholder="optional"
+            {...form.register('socialLinks.telegram')}
+          />
         </div>
         <div className="flex w-full items-center justify-center px-8 py-6">
           {isConnected ? <Button fullWidth>Create Token</Button> : <ConnectWalletButton />}

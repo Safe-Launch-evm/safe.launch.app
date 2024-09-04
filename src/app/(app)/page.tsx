@@ -79,7 +79,8 @@ export default async function Home({ searchParams }: HomeProps) {
                 name={token.name}
                 symbol={token.symbol}
                 image={token.logo_url}
-                owner={'K.tiki'}
+                creator_unique_id={token.creator.unique_id}
+                owner={token.creator.username}
                 market_cap={22.8}
               />
             );

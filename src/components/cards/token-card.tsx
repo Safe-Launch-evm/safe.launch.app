@@ -3,6 +3,7 @@ import { Star } from 'lucide-react';
 import { AspectRatio } from '../ui/aspect-ratio';
 import { PlaceholderImage } from '../placeholder-image';
 import Link from 'next/link';
+import { formatAddress, truncate } from '@/lib/utils';
 
 type TokenCardProps = {
   unique_id: string;
@@ -11,14 +12,12 @@ type TokenCardProps = {
   image: string;
   owner: string;
   market_cap: number;
+  creator_unique_id: string;
 };
 
 export default function TokenCard({ ...token }: TokenCardProps) {
   return (
-    <Link
-      href={`/token/${token.unique_id}`}
-      className="flex min-w-full flex-col items-start gap-4 rounded-lg border border-card-foreground bg-card p-4 lg:min-w-[240px]"
-    >
+    <div className="flex w-full min-w-full flex-col items-start gap-4 rounded-lg border border-card-foreground bg-card p-2 lg:min-w-[240px] lg:p-4">
       <div className="flex w-full items-center justify-between">
         <dd className="flex items-center justify-center rounded bg-primary px-1 py-[2px] text-[0.5rem] text-white lg:text-[0.875rem]">
           {token.symbol}
@@ -27,12 +26,12 @@ export default function TokenCard({ ...token }: TokenCardProps) {
           Market cap: <span className="text-[#6100FF]">{token.market_cap}</span>
         </dd>
       </div>
-      <AspectRatio ratio={2 / 1}>
+      <AspectRatio ratio={2 / 1.5}>
         {token.image ? (
           <Image
             src={token.image ?? '/images/token-placeholder.webp'}
             alt={`${token.name}-${token.symbol}`}
-            className="rounded-lg object-cover"
+            className="rounded-lg bg-no-repeat object-cover object-center"
             sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
             fill
             loading="lazy"
@@ -50,17 +49,27 @@ export default function TokenCard({ ...token }: TokenCardProps) {
         className="h-[134px] min-w-[134px] rounded-lg bg-cover bg-no-repeat lg:min-w-[208px]"
         priority
       /> */}
-      <div className="flex w-full items-center justify-between">
-        <div className="flex flex-col gap-4">
-          <dt className="text-[1rem]/[0.01rem] font-bold">{token.name}</dt>
-          <dd className="text-[0.875rem]/[0.00875rem] font-light text-muted">
-            Created by {token.owner}
+      <div className="flex h-full w-full items-center justify-between">
+        <div className="flex h-full flex-col gap-1">
+          <dt className="text-ellipsis font-bold">
+            <Link href={`/token/${token.unique_id}`}>{truncate(token.name, 14)}</Link>
+
+            {/* {token.name} */}
+          </dt>
+          <dd className="text-sm font-light text-muted">
+            Created by{' '}
+            <Link
+              href={`/profile/${token.creator_unique_id}`}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              {formatAddress(token.owner)}
+            </Link>
           </dd>
         </div>
         <div className="flex size-[34px] items-center justify-center rounded-lg border">
           <Star size={16} />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
