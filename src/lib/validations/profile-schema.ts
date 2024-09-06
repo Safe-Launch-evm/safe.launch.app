@@ -11,3 +11,9 @@ export const profileSchema = z.object({
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;
+
+export const commentSchema = z.object({
+  message: z.string()
+});
+
+export type CommentInput = z.infer<typeof commentSchema>;

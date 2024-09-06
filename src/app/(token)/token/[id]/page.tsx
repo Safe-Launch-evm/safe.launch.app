@@ -12,6 +12,7 @@ import BuyAndSellCard from './_components/buy-and-sell-card';
 import { fetchSingleToken } from '@/lib/actions/token';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { PlaceholderImage } from '@/components/placeholder-image';
+import AddComment from './_components/add-comment';
 
 export default async function TokenPage({ params }: { params: { id: string } }) {
   const token = await fetchSingleToken(params.id);
@@ -46,35 +47,26 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
               <h2 className="text-[1.25rem]/[0.0125rem] font-bold">Description</h2>
               <p className="text-[1.125rem]/[2rem]">{token?.description}</p>
               <div className="flex items-center justify-end gap-6">
-                {/* <SocialIconLink href={social_links.twitter} icon="xTwitter" name="XTwitter" />
-                <SocialIconLink href="#" icon="youtube" name="Youtube" />
-                <SocialIconLink href={social_links.discord} icon="discord" name="Discord" />
-                <SocialIconLink href="#" icon="telegram" name="Telegram" />
-                <SocialIconLink
-                  href={social_links.website}
-                  icon="website"
-                  name="website name"
-                /> */}
-                {social_links.twitter && (
+                {social_links.twitter ? (
                   <SocialIconLink
                     href={social_links.twitter}
                     icon="xTwitter"
                     name="XTwitter"
                   />
-                )}
-                {social_links.discord && (
+                ) : null}
+                {social_links.discord ? (
                   <SocialIconLink href={social_links.discord} icon="discord" name="Discord" />
-                )}
-                {social_links.telegram && (
+                ) : null}
+                {social_links.telegram ? (
                   <SocialIconLink
                     href={social_links.telegram}
                     icon="telegram"
                     name="Telegram"
                   />
-                )}
-                {social_links.website && (
+                ) : null}
+                {social_links.website ? (
                   <SocialIconLink href={social_links.website} icon="website" name="Website" />
-                )}
+                ) : null}
               </div>
             </div>
           </div>
@@ -92,15 +84,13 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
               circulation.
             </p>
           </div>
-          <Tabs defaultValue="transactions">
+          <Tabs defaultValue="comments">
             <TabsList>
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
               <TabsTrigger value="comments">Comments</TabsTrigger>
+              <TabsTrigger value="transactions">Transactions</TabsTrigger>
             </TabsList>
-            <TabsContent value="transactions">
-              <TransactionTable />
-            </TabsContent>
             <TabsContent value="comments">
+              <AddComment />
               <section className="flex flex-col gap-4 py-10">
                 {[...Array(10)].map((_, index) => (
                   <Comment
@@ -112,6 +102,9 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
                   />
                 ))}
               </section>
+            </TabsContent>
+            <TabsContent value="transactions">
+              <TransactionTable />
             </TabsContent>
           </Tabs>
         </div>
