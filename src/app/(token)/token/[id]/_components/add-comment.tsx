@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import Form, { useZodForm } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { useWallet } from '@/components/wallet/wallet-connect';
 import { addComment } from '@/lib/actions/comment';
 import { CommentInput, commentSchema } from '@/lib/validations/profile-schema';
 import { STATE_STATUS } from '@/types';
@@ -14,6 +15,7 @@ import { toast } from 'sonner';
 export default function AddComment() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const { isConnected } = useWallet();
   const [status, setStatus] = useState<STATE_STATUS>(STATE_STATUS.IDLE);
   const form = useZodForm({
     schema: commentSchema,
@@ -25,18 +27,20 @@ export default function AddComment() {
     try {
       const comment = await addComment(params.id, data);
       if (!comment) {
-        toast.error('Error!', { description: 'Please trt again' });
+        form.reset();
         setStatus(STATE_STATUS.ERROR);
+        toast.error('Error!', { description: 'Please trt again' });
         return;
       }
 
       setStatus(STATE_STATUS.SUCCESS);
+      form.reset();
       router.refresh();
       return;
     } catch (error) {
+      form.reset();
       setStatus(STATE_STATUS.ERROR);
       toast.error('Error!', { description: 'Please trt again' });
-
       return;
     }
   }
@@ -52,21 +56,32 @@ export default function AddComment() {
             {...form.register('message')}
           />
           <div className="flex items-center">
-            <Button
-              type="submit"
-              size="sm"
-              className="ml-auto gap-1.5"
-              disabled={
-                !form.formState.isDirty ||
-                !form.formState.isValid ||
-                status === STATE_STATUS.LOADING
-              }
-            >
-              {status === STATE_STATUS.LOADING && (
-                <LoaderCircle className="size-4 animate-spin" />
-              )}
-              Comment
-            </Button>
+            {isConnected ? (
+              <Button
+                type="submit"
+                size="sm"
+                className="ml-auto gap-1.5"
+                disabled={
+                  !form.formState.isDirty ||
+                  !form.formState.isValid ||
+                  status === STATE_STATUS.LOADING
+                }
+              >
+                {status === STATE_STATUS.LOADING && (
+                  <LoaderCircle className="size-4 animate-spin" />
+                )}
+                Comment
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                size="sm"
+                className="ml-auto gap-1.5"
+                onClick={() => toast.warning('Please Connect your wallet to comment')}
+              >
+                Comment
+              </Button>
+            )}
           </div>
         </div>
       </Form>

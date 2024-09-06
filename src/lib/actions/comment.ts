@@ -32,8 +32,6 @@ export const fetchTokenComments = async (tokenId: string): Promise<CommentType[]
       tag: 'comments'
     });
 
-    console.log(comments);
-
     if (comments.code !== 200) return [];
     return comments.result;
   } catch (error) {

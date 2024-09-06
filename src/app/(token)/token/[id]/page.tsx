@@ -18,6 +18,7 @@ import { formatAddress, formatDateToNow } from '@/lib/utils';
 
 export default async function TokenPage({ params }: { params: { id: string } }) {
   const token = await fetchSingleToken(params.id);
+
   const comments = await fetchTokenComments(params.id);
 
   if (!token) {
@@ -94,7 +95,6 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
               <AddComment />
               <section className="flex flex-col gap-4 py-10">
                 {/* {[...Array(10)].map((_, index) => ( */}
-
                 {comments.length >= 1 ? (
                   comments.map(comment => {
                     return (
@@ -113,7 +113,6 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
                 ) : (
                   <div></div>
                 )}
-
                 {/* ))} */}
               </section>
             </TabsContent>
