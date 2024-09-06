@@ -13,15 +13,16 @@ import { fetchSingleToken } from '@/lib/actions/token';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { PlaceholderImage } from '@/components/placeholder-image';
 import AddComment from './_components/add-comment';
+import { fetchTokenComments } from '@/lib/actions/comment';
+import { formatAddress, formatDateToNow } from '@/lib/utils';
 
 export default async function TokenPage({ params }: { params: { id: string } }) {
   const token = await fetchSingleToken(params.id);
+  const comments = await fetchTokenComments(params.id);
 
   if (!token) {
     return;
   }
-
-  console.log(JSON.parse(token.social_links));
 
   const social_links = JSON.parse(token.social_links);
   return (
@@ -92,15 +93,28 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
             <TabsContent value="comments">
               <AddComment />
               <section className="flex flex-col gap-4 py-10">
-                {[...Array(10)].map((_, index) => (
-                  <Comment
-                    key={index}
-                    username="Bigname001"
-                    date="hrs ago"
-                    avatar="/images/meme_token.png"
-                    comment="LFG🥪"
-                  />
-                ))}
+                {/* {[...Array(10)].map((_, index) => ( */}
+
+                {comments.length >= 1 ? (
+                  comments.map(comment => {
+                    return (
+                      <Comment
+                        key={comment.unique_id}
+                        username={formatAddress(comment.user.username)}
+                        date={formatDateToNow(comment.created_at)} // {comment.created_at}
+                        avatar={
+                          comment.user.profile_image ??
+                          `https://avatar.vercel.sh/${comment.user.username}?size=150`
+                        }
+                        comment={comment.message}
+                      />
+                    );
+                  })
+                ) : (
+                  <div></div>
+                )}
+
+                {/* ))} */}
               </section>
             </TabsContent>
             <TabsContent value="transactions">
