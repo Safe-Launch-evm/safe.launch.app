@@ -311,7 +311,7 @@ function AuthSignMessage() {
       return;
     }
 
-    if (user.username.includes('-')) {
+    if (user.username === null) {
       setComponent(1);
       setStatus(STATE_STATUS.SUCCESS);
     } else {

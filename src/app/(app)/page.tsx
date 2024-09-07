@@ -9,6 +9,7 @@ import TokenCard from '@/components/cards/token-card';
 import { getCookieStorage } from '@/lib/cookie-storage';
 import { getUser } from '@/lib/actions/user';
 import { fetchTokens } from '@/lib/actions/token';
+import { formatAddress } from '@/lib/utils';
 
 type HomeProps = {
   searchParams: { tab: string };
@@ -78,7 +79,11 @@ export default async function Home({ searchParams }: HomeProps) {
                 symbol={token.symbol}
                 image={token.logo_url}
                 creator_unique_id={token.creator.unique_id}
-                owner={token.creator.username}
+                owner={
+                  token.creator.username
+                    ? token.creator.username
+                    : formatAddress(token.creator.wallet_address)
+                }
                 market_cap={22.8}
               />
             );

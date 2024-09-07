@@ -62,7 +62,7 @@ export default function TokenCard({ ...token }: TokenCardProps) {
               href={`/profile/${token.creator_unique_id}`}
               className="text-primary underline-offset-4 hover:underline"
             >
-              {token.owner.includes('-') ? formatAddress(token.owner) : token.owner}
+              {token.owner}
             </Link>
           </dd>
         </div>
