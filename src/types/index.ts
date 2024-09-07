@@ -18,7 +18,8 @@ export type Token = {
   social_links: string;
   creator: {
     unique_id: string;
-    username: string;
+    username: string | null;
+    wallet_address: string;
   };
   created_at: string;
   updated_at: string;
@@ -26,7 +27,8 @@ export type Token = {
 
 export type User = {
   unique_id: string;
-  username: string;
+  username: string | null;
+  wallet_address: string;
   profile_image: string | null;
 };
 
@@ -46,7 +48,7 @@ export type UserType = {
   id: number;
   wallet_address: string;
   profile_image: string | null;
-  username: string;
+  username: string | null;
   bio: string | null;
   created_at: string;
   updated_at: string;
