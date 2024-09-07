@@ -63,19 +63,6 @@ export default function WalletProvider(props: { children: React.ReactNode }) {
     }
   }, [status, setOpen, pendingConnector, setPendingConnector]);
 
-  // React.useEffect(() => {
-  //   (async () => {
-  //     if (!isConnected) {
-  //       return;
-  //     }
-
-  //     const token = await getCookieStorage('auth_token');
-  //     if (!token) {
-  //       setOpenAuthDialog(true);
-  //     }
-  //   })();
-  // }, [isConnected, setOpenAuthDialog]);
-
   React.useEffect(() => {
     const checkAuthToken = async () => {
       if (isConnected) {
@@ -122,9 +109,6 @@ export default function WalletProvider(props: { children: React.ReactNode }) {
           <AuthSignMessage />
         </WalletModalContent>
       </WalletModal>
-      {/* <AlertDialog open={openUserDialog} onOpenChange={setOpenUserDialog}>
-        <RegisterUserForm />
-      </AlertDialog> */}
     </WalletContext.Provider>
   );
 }

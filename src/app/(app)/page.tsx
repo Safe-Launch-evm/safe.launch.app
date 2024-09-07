@@ -21,8 +21,6 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const tokens = await fetchTokens({ favorites });
 
-  console.log(tokens);
-
   return (
     <Shell className="pt-[220px]">
       <section className="flex flex-col-reverse items-center justify-center gap-10 lg:flex-row lg:justify-between xl:gap-[213px]">

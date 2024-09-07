@@ -40,3 +40,14 @@ export type CommentType = {
   updated_at: string;
   user: User;
 };
+
+export type UserType = {
+  unique_id: string;
+  id: number;
+  wallet_address: string;
+  profile_image: string | null;
+  username: string;
+  bio: string | null;
+  created_at: string;
+  updated_at: string;
+};

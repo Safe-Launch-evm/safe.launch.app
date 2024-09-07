@@ -100,7 +100,11 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
                     return (
                       <Comment
                         key={comment.unique_id}
-                        username={formatAddress(comment.user.username)}
+                        username={
+                          comment.user.username.includes('-')
+                            ? formatAddress(comment.user.username)
+                            : comment.user.username
+                        }
                         date={formatDateToNow(comment.created_at)} // {comment.created_at}
                         avatar={
                           comment.user.profile_image ??
