@@ -23,3 +23,20 @@ export type Token = {
   created_at: string;
   updated_at: string;
 };
+
+export type User = {
+  unique_id: string;
+  username: string;
+  profile_image: string | null;
+};
+
+export type CommentType = {
+  unique_id: string;
+  id: number;
+  message: string;
+  user_id: string;
+  token_id: string;
+  created_at: string;
+  updated_at: string;
+  user: User;
+};
