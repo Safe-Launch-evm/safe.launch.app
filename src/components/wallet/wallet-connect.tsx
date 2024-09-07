@@ -21,11 +21,28 @@ import {
   useSignMessage
 } from 'wagmi';
 import { formatEther } from 'viem';
-import { Check, ChevronLeft, Copy, RotateCcw } from 'lucide-react';
+import {
+  Check,
+  ChevronLeft,
+  CircleX,
+  Copy,
+  Delete,
+  ImagePlus,
+  LoaderCircle,
+  RotateCcw
+} from 'lucide-react';
 import { WalletContext } from '@/context/wallet-context';
 import { Icon } from '../icons';
-import { getNonce, verifyNonce } from '@/lib/actions/user';
+import { getNonce, getUser, registerUser, verifyNonce } from '@/lib/actions/user';
 import { STATE_STATUS } from '@/types';
+import Form, { useZodForm } from '../ui/form';
+import { ProfileInput, profileSchema } from '@/lib/validations/profile-schema';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import Image from 'next/image';
+import { uploadLogo } from '@/lib/actions/token';
+import { truncate } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const MODAL_CLOSE_DURATION = 320;
 
@@ -81,19 +98,6 @@ function Account() {
 
   return (
     <>
-      {/* <WalletModalHeader>
-        <WalletModalTitle className="text-left text-[18px]/[18px] font-bold">
-          Setup profile
-        </WalletModalTitle>
-        <WalletModalDescription className="sr-only">
-          Profile modal to edit profile.
-        </WalletModalDescription>
-      </WalletModalHeader>
-      <WalletModalBody className="h-full">
-        <div className="w-full">
-          <RegisterUserForm />
-        </div>
-      </WalletModalBody> */}
       <WalletModalHeader>
         <WalletModalTitle>Connected</WalletModalTitle>
         <WalletModalDescription className="sr-only">
@@ -247,10 +251,15 @@ function WalletOption(props: { connector: Connector; onClick: () => void }) {
   );
 }
 
+interface ISection {
+  [key: string]: React.ReactNode;
+}
+
 function AuthSignMessage() {
   const { address } = useAccount();
   const context = React.useContext(WalletContext);
   const [status, setStatus] = React.useState<STATE_STATUS>(STATE_STATUS.IDLE);
+  const [component, setComponent] = React.useState<number>(0);
   // Add the useSignMessage hook
   const { data, isError, isSuccess, signMessage } = useSignMessage();
 
@@ -275,57 +284,47 @@ function AuthSignMessage() {
     }
   }, [address]);
 
+  // async function verify({ address, data }: { address: string; data: any }) {
+  //   setStatus(STATE_STATUS.LOADING);
+  //   const token = await verifyNonce({ address, sig: data });
+  //   if (!token) {
+  //     setStatus(STATE_STATUS.ERROR);
+  //     return;
+  //   }
+  //   setStatus(STATE_STATUS.SUCCESS);
+  //   context.setOpenAuthDialog(false);
+  //   return;
+  // }
+
   async function verify({ address, data }: { address: string; data: any }) {
     setStatus(STATE_STATUS.LOADING);
     const token = await verifyNonce({ address, sig: data });
     if (!token) {
       setStatus(STATE_STATUS.ERROR);
+      return;
     }
-    setStatus(STATE_STATUS.SUCCESS);
-    context.setOpenAuthDialog(false);
+
+    const user = await getUser({ address });
+
+    if (!user) {
+      setStatus(STATE_STATUS.ERROR);
+      return;
+    }
+
+    if (user.username.includes('-')) {
+      setComponent(1);
+      setStatus(STATE_STATUS.SUCCESS);
+    } else {
+      setStatus(STATE_STATUS.SUCCESS);
+      context.setOpenAuthDialog(false);
+    }
   }
 
   React.useEffect(() => {
     if (address && isSuccess) {
-      console.log('add', address);
       verify({ address, data });
     }
   }, [address, isSuccess]);
-
-  // React.useEffect(() => {
-  //   async function handleAuth() {
-  //     if (!address) return;
-
-  //     try {
-  //       const nonceResponse = await getNonce({ address });
-  //       if (nonceResponse.code !== 200) {
-  //         console.error('Failed to get nonce:', nonceResponse);
-  //         return;
-  //       }
-
-  //       const signature = signMessage({
-  //         message: `Signing into SafeLaunch: ${nonceResponse.result}`
-  //       });
-
-  //       if (isSuccess) {
-  //         const token = await verifyNonce({ address, sig: data });
-  //         if (token) {
-  //           context.setOpenAuthDialog(false);
-  //         } else {
-  //           console.error('Failed to verify nonce');
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Authentication error:', error);
-  //     }
-  //   }
-
-  //   handleAuth();
-  // }, [address, signMessage, isSuccess, data, context]);
-
-  // console.log('sig', data);
-
-  // [address, signMessage, isSuccess, data, context]
 
   const onHandleClick = async () => {
     if (address) {
@@ -346,48 +345,221 @@ function AuthSignMessage() {
     );
   }
 
+  function SignMessagePending() {
+    return (
+      <>
+        <WalletModalHeader>
+          <BackChevron />
+          <WalletModalTitle>Sign in to Safelaunch</WalletModalTitle>
+          <WalletModalDescription className="sr-only">
+            Sign your account.
+          </WalletModalDescription>
+        </WalletModalHeader>
+        <WalletModalBody>
+          <div className="flex w-full flex-col items-center justify-center gap-9 md:pt-5">
+            <div className="relative flex size-[116px] items-center justify-center rounded-2xl border p-3">
+              <img
+                className="size-full overflow-hidden rounded-2xl"
+                src={`https://avatar.vercel.sh/${address}?size=150`}
+                alt="User gradient avatar"
+              />
+              <img />
+              {isError ? (
+                <RetrySignInButton />
+              ) : status === STATE_STATUS.ERROR ? (
+                <RetrySignInButton />
+              ) : null}
+            </div>
+
+            <div className="space-y-3.5 px-3.5 text-center sm:px-0">
+              <h1 className="text-xl font-semibold">
+                {isError ? 'Request Error' : 'Requesting signing'}
+              </h1>
+              <p className="text-balance text-sm text-muted-foreground">
+                {isError
+                  ? 'There was an error with the request. Click above to try again.'
+                  : `Sign the request to confirm your wallet.`}
+              </p>
+            </div>
+          </div>
+        </WalletModalBody>
+        <WalletModalFooter>
+          <div className="h-0" />
+        </WalletModalFooter>
+      </>
+    );
+  }
+
+  const components: ISection = {
+    0: <SignMessagePending />,
+    1: <RegisterUserForm />
+  };
+
+  return <>{components[component]}</>;
+}
+
+type ImageProps = {
+  url: string;
+  image: string;
+};
+
+function RegisterUserForm() {
+  const { address } = useAccount();
+  const context = React.useContext(WalletContext);
+  const [status, setStatus] = React.useState<STATE_STATUS>(STATE_STATUS.IDLE);
+  const [uploadStatus, setUploadStatus] = React.useState(STATE_STATUS.IDLE);
+  const [imageSrc, setImageSrc] = React.useState<ImageProps | null>(null);
+
+  const form = useZodForm({
+    schema: profileSchema,
+    defaultValues: {
+      walletAddress: address,
+      profileImage: `https://avatar.vercel.sh/${address}?size=150`
+    }
+  });
+
+  const { setValue } = form;
+
+  React.useEffect(() => {
+    if (imageSrc) {
+      setValue('profileImage', imageSrc.url);
+    }
+  }, [imageSrc, setValue]);
+
+  async function onUpload(formData: any) {
+    setUploadStatus(STATE_STATUS.LOADING);
+    try {
+      const uploaded = await uploadLogo(formData);
+      if (uploaded.status !== 201) {
+        setImageSrc(null);
+        setUploadStatus(STATE_STATUS.ERROR);
+      }
+      setImageSrc(uploaded.result);
+      setUploadStatus(STATE_STATUS.SUCCESS);
+    } catch (error) {
+      setImageSrc(null);
+      setUploadStatus(STATE_STATUS.ERROR);
+    }
+  }
+
+  async function onSubmit(data: ProfileInput) {
+    setStatus(STATE_STATUS.LOADING);
+    try {
+      const result = await registerUser(data);
+      if (!result) {
+        setStatus(STATE_STATUS.ERROR);
+        toast.error('Opps!', { description: 'An error occurred' });
+        return;
+      }
+      setStatus(STATE_STATUS.SUCCESS);
+      context.setOpenAuthDialog(false);
+    } catch (error) {
+      setStatus(STATE_STATUS.ERROR);
+      toast.error('Opps!', { description: 'An error occurred' });
+      return;
+    }
+  }
+
   return (
     <>
       <WalletModalHeader>
         <BackChevron />
-        <WalletModalTitle>Sign in to Safelaunch</WalletModalTitle>
-        <WalletModalDescription className="sr-only">Sign your account.</WalletModalDescription>
+        <WalletModalTitle className="text-left">Setup profile</WalletModalTitle>
+        <WalletModalDescription className="sr-only">
+          {' '}
+          Profile modal to edit profile.
+        </WalletModalDescription>
       </WalletModalHeader>
-      <WalletModalBody>
-        <div className="flex w-full flex-col items-center justify-center gap-9 md:pt-5">
-          <div className="relative flex size-[116px] items-center justify-center rounded-2xl border p-3">
-            <img
-              className="size-full overflow-hidden rounded-2xl"
-              src={`https://avatar.vercel.sh/${address}?size=150`}
-              alt="User gradient avatar"
-            />
-            <img />
-            {isError ? (
-              <RetrySignInButton />
-            ) : status === STATE_STATUS.ERROR ? (
-              <RetrySignInButton />
-            ) : null}
+      <WalletModalBody className="h-[400px] max-h-[500px]">
+        <Form form={form} onSubmit={form.handleSubmit(onSubmit)} className="w-full px-4">
+          <div className="flex flex-col gap-2 px-4 pt-6 text-[1.125rem]/[1.125rem]">
+            <span>Image</span>
+
+            <div className="flex items-center justify-center gap-4 pr-4">
+              <label
+                htmlFor="file-upload"
+                className="relative flex size-[64px] cursor-pointer items-center justify-center rounded-lg border disabled:cursor-not-allowed"
+              >
+                {imageSrc ? (
+                  <Image
+                    src={imageSrc.url}
+                    alt="pre image uplod"
+                    width={64}
+                    height={64}
+                    className="size-[64px] rounded-lg bg-cover bg-center bg-no-repeat"
+                  />
+                ) : (
+                  <>
+                    {uploadStatus === STATE_STATUS.LOADING ? (
+                      <LoaderCircle size={35} className="animate-spin" />
+                    ) : uploadStatus === STATE_STATUS.ERROR ? (
+                      <CircleX size={35} />
+                    ) : (
+                      <ImagePlus size={35} />
+                    )}
+                  </>
+                )}
+                <Input
+                  id="file-upload"
+                  type="file"
+                  className="sr-only"
+                  disabled={uploadStatus === STATE_STATUS.LOADING}
+                  {...form.register('image')}
+                  onChange={(e: any) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const formData = new FormData();
+                      formData.append('image', file);
+                      formData.append('folder', 'avatar');
+                      onUpload(formData);
+                    }
+                  }}
+                />
+                {imageSrc ? (
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="group absolute -bottom-2 -right-2 rounded-full bg-muted p-1.5 shadow"
+                    // onClick={onDeleteImage}
+                  >
+                    <Delete className="size-4 transition-transform" />
+                  </Button>
+                ) : null}
+              </label>
+              <div className="flex flex-col gap-1 text-[1.125rem]">
+                <span> {imageSrc ? truncate(imageSrc.image, 32) : 'PNG, JPEG, max 5MB'}</span>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-3.5 px-3.5 text-center sm:px-0">
-            <h1 className="text-xl font-semibold">
-              {isError ? 'Request Error' : 'Requesting signing'}
-            </h1>
-            <p className="text-balance text-sm text-muted-foreground">
-              {isError
-                ? 'There was an error with the request. Click above to try again.'
-                : `Sign the request to confirm your wallet.`}
-            </p>
+          <div className="flex w-full flex-col gap-6">
+            <Input label="Username" placeholder="Symbol" {...form.register('username')} />
+            <Textarea placeholder="Enter text" label="Bio" {...form.register('bio')} />
+            <div className="flex items-center justify-end gap-4">
+              <Button
+                type="button"
+                variant={'ghost'}
+                size={'sm'}
+                className="text-foreground"
+                onClick={() => context.setOpenAuthDialog(false)}
+              >
+                Skip
+              </Button>
+              <Button
+                type={'submit'}
+                className="size-sm"
+                disabled={status === STATE_STATUS.LOADING}
+              >
+                {status === STATE_STATUS.LOADING ? <LoaderCircle size={20} /> : null}
+                Save
+              </Button>
+            </div>
           </div>
-        </div>
+        </Form>
       </WalletModalBody>
-      <WalletModalFooter>
-        <div className="h-0" />
-      </WalletModalFooter>
     </>
   );
 }
-
 function CopyAddressButton() {
   const { address } = useAccount();
   const [copied, setCopied] = React.useState(false);

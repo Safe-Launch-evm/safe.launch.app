@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
 import { writeFile } from 'fs/promises';
-import { handleUpload } from '@/config/cloud';
+import { handleDelete, handleUpload } from '@/config/cloud';
 
 // Define the POST handler for the file upload
 export const POST = async (req: Request) => {
@@ -11,6 +11,7 @@ export const POST = async (req: Request) => {
 
   // Get the file from the form data
   const file = formData.get('image') as File | null;
+  const folder = formData.get('folder') as string | null;
 
   // Check if a file is received
   if (!file || !(file instanceof File)) {
@@ -29,8 +30,20 @@ export const POST = async (req: Request) => {
   console.log(filename);
 
   try {
-    const res = await handleUpload(dataUri);
+    const res = await handleUpload(dataUri, folder ?? 'tokens');
     const result = { url: res.secure_url, image: res.public_id };
+    return NextResponse.json({ Message: 'Success', result, status: 201 });
+  } catch (error) {
+    console.log('Error occurred ', error);
+    return NextResponse.json({ Message: 'Failed', result: null, status: 500 });
+  }
+};
+
+export const DELETE = async (req: Request) => {
+  const formData = req.formData();
+  const image = (await formData).get('image');
+  try {
+    const result = await handleDelete(image);
     return NextResponse.json({ Message: 'Success', result, status: 201 });
   } catch (error) {
     console.log('Error occurred ', error);

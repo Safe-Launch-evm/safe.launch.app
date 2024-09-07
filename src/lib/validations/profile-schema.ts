@@ -1,13 +1,27 @@
 import { z } from 'zod';
 
 export const profileSchema = z.object({
-  name: z.string().min(1, { message: 'Please provide a name for your token' }),
+  username: z
+  .string()
+  .min(3, {
+    message: 'Username must be at least 3 characters long'
+  })
+  .max(8, { message: "Username can't be longer than 8 characters" })
+  .regex(/^[a-zA-Z0-9_]+$/, {
+    message: 'Username can only contain letters, numbers, and underscores'
+  }),
   bio: z.string(),
   image: z.any(
-    z.instanceof(File).refine(file => file.size < 5 * 1024 * 1024, {
-      message: 'File size must be less than 5MB'
-    })
-  )
+    z
+      .instanceof(File)
+      .refine(file => file.size < 5 * 1024 * 1024, {
+        message: 'File size must be less than 5MB'
+      })
+      .optional()
+      .nullish()
+  ),
+  profileImage: z.string().optional().nullish(),
+  walletAddress: z.string()
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;

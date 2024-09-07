@@ -27,14 +27,14 @@ export default function Comment({ ...item }: CommentProps) {
           </span>
           <span className="font-light text-muted">{item.date}</span>
         </div>
-        <div className="flex items-center gap-6">
+        {/* <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 font-light">
             <Heart size={24} /> <span className="text-muted">8</span>
           </div>
           <div className="flex items-center gap-2 font-light">
             <span className="text-muted">reply</span> <CornerUpLeft size={24} />
           </div>
-        </div>
+        </div> */}
       </div>
       <p className="font-medium text-muted">{item.comment}</p>
     </div>

@@ -6,10 +6,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-export async function handleUpload(file: any) {
+export async function handleUpload(file: any, folder?: string) {
   const res = await cloudinary.uploader.upload(file, {
     resource_type: 'auto',
     upload_preset: 'safe_load',
+    folder: folder ?? 'tokens',
     transformation: { width: 208, height: 150 }
   });
   return res;

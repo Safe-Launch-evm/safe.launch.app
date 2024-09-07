@@ -34,7 +34,7 @@ export default function RegisterUserForm() {
       <Form form={form} className="w-full">
         <div></div>
         <div className="flex w-full flex-col gap-6">
-          <Input label="Token symbol" placeholder="Symbol" {...form.register('name')} />
+          <Input label="Token symbol" placeholder="Symbol" {...form.register('username')} />
           <Textarea placeholder="Enter text" label="Bio" {...form.register('bio')} />
           <div className="flex items-center justify-end gap-4">
             <Button variant={'ghost'} className="text-foreground">
