@@ -9,7 +9,7 @@ export const addComment = async (tokenId: string, data: object) => {
       token: token,
       formData: data
     });
-    console.log(comment);
+    // console.log(comment);
     if (comment.code !== 200) {
       return null;
     }
