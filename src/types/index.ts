@@ -53,3 +53,25 @@ export type UserType = {
   created_at: string;
   updated_at: string;
 };
+
+export type TokenLike = {
+  unique_id: string;
+  id: number;
+  user_id: string;
+  token_id: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    unique_id: string;
+    username: string;
+    profile_image: string;
+    wallet_address: string;
+  };
+  token: {
+    unique_id: string;
+    name: string;
+    symbol: string;
+    logo_url: string;
+    creator_id: string;
+  };
+};

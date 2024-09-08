@@ -60,3 +60,10 @@ export async function verifyNonce({ address, sig }: { address: string; sig: stri
     return null;
   }
 }
+
+export async function getTokensCreatedByUser({ address }: { address: string }) {
+  try {
+    const tokens = await client(`/tokens/user/${address}`, {});
+    return tokens;
+  } catch (error) {}
+}

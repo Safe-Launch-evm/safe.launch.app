@@ -1,4 +1,4 @@
-import { Token } from '@/types';
+import { Token, TokenLike } from '@/types';
 import client from '../client';
 import { getCookieStorage } from '../cookie-storage';
 import { CreateTokenInput } from '../validations/create-token-schema';
@@ -39,47 +39,91 @@ type FetchTokenResponse = {
   error: boolean;
   data: string;
   code: number;
-  result: Token[];
+  result: Token[] | TokenLike[];
 };
 
-// export async function fetchToken({}): Promise<Token[] | null> {
+// export async function fetchTokens({
+//   trending = false,
+//   favorites = false,
+//   search
+// }: {
+//   search?: string;
+//   trending?: boolean;
+//   favorites?: boolean;
+// } = {}): Promise<Token[] | TokenLike[] | null> {
 //   try {
 //     const token = await getCookieStorage('auth_token');
-//     const tokens: FetchTokenResponse = await client(`/tokens?trending=true&favorites=true`, {
+//     const queryParams = new URLSearchParams();
+//     if (trending) queryParams.append('trending', 'true');
+//     if (favorites) queryParams.append('favorites', 'true');
+
+//     const tokens: FetchTokenResponse = await client(`/tokens?${queryParams.toString()}`, {
 //       token: token,
 //       tag: 'tokens'
 //     });
+
+//     if (search) {
+//       const tokens: FetchTokenResponse = await client(`/token/search/${search}`, {
+//         tag: 'token'
+//       });
+//       return tokens.result;
+//     }
+//     if (!tokens.result) {
+//       return [];
+//     }
 //     return tokens.result;
 //   } catch (error) {
 //     return [];
 //   }
 // }
 
+type TokenResult = {
+  favorites: TokenLike[] | null;
+  tokens: Token[] | null;
+};
+
 export async function fetchTokens({
   trending = false,
-  favorites = false
+  favorites = false,
+  search
 }: {
+  search?: string;
   trending?: boolean;
   favorites?: boolean;
-} = {}): Promise<Token[] | null> {
+} = {}): Promise<TokenResult> {
   try {
     const token = await getCookieStorage('auth_token');
     const queryParams = new URLSearchParams();
+
     if (trending) queryParams.append('trending', 'true');
     if (favorites) queryParams.append('favorites', 'true');
 
-    const tokens: FetchTokenResponse = await client(`/tokens?${queryParams.toString()}`, {
-      token: token,
-      tag: 'tokens'
-    });
-    if (!tokens.result) {
-      return [];
+    const endpoint = '/tokens';
+    const response: FetchTokenResponse = await client(
+      `${endpoint}?${queryParams.toString()}`,
+      {
+        token,
+        tag: 'tokens'
+      }
+    );
+
+    if (search) {
+      const response: FetchTokenResponse = await client(`/token/search/${search}`, {
+        tag: 'token'
+      });
+      return { tokens: response.result as Token[], favorites: null };
     }
-    return tokens.result;
+
+    return {
+      favorites: favorites ? (response.result as TokenLike[]) : null,
+      tokens: !favorites ? (response.result as Token[]) : null
+    };
   } catch (error) {
-    return [];
+    console.error('Error fetching tokens:', error);
+    return { favorites: null, tokens: null };
   }
 }
+
 export async function fetchSingleToken(tokenId: string): Promise<Token | null> {
   try {
     const token: any = await client(`/tokens/${tokenId}`, {
@@ -91,6 +135,38 @@ export async function fetchSingleToken(tokenId: string): Promise<Token | null> {
       return null;
     }
     return result;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function favoriteToken(tokenId: string) {
+  try {
+    const token = await getCookieStorage('auth_token');
+    const result = await client('/token/favorite', { token, formData: { tokenId } });
+    return result;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function deleteFavoriteToken(tokenId: string) {
+  try {
+    const origin = process.env.NEXT_PUBLIC_APP_CLIENT ?? '';
+    const token = await getCookieStorage('auth_token');
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API_URL}/token/favorite/${tokenId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          accept: 'application/json',
+          'Access-Control-Allow-Origin': origin,
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${token}`
+        }
+      }
+    );
+    return await res.json();
   } catch (error) {
     return null;
   }
