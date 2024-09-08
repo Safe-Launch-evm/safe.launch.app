@@ -122,7 +122,7 @@ function Account() {
               <CopyAddressButton />
             </div>
             <p className="text-balance text-sm text-muted-foreground">
-              {`${formattedUserBalace ?? '0.00'} ETH`}
+              {`${formattedUserBalace ?? '0.00'} RWA`}
             </p>
           </div>
 
@@ -260,29 +260,24 @@ function AuthSignMessage() {
   const context = React.useContext(WalletContext);
   const [status, setStatus] = React.useState<STATE_STATUS>(STATE_STATUS.IDLE);
   const [component, setComponent] = React.useState<number>(0);
-  // Add the useSignMessage hook
   const { data, isError, isSuccess, signMessage } = useSignMessage();
 
   async function fetchNonce({ address }: { address: string }) {
     setStatus(STATE_STATUS.LOADING);
-    const nonce: any = await getNonce({ address });
-    console.log('before', address);
 
-    if (nonce.code !== 200) {
-      setStatus(STATE_STATUS.ERROR);
-    }
-    console.log('after', nonce);
+    const nonce: any = await getNonce({ address });
+    // console.log('before', address);
+
+    if (nonce.code !== 200) setStatus(STATE_STATUS.ERROR);
+
+    // console.log('after', nonce);
+
     signMessage({
       message: `Signing into SafeLaunch: ${nonce.result}`
-    }); // Call signMessage here
+    });
+
     setStatus(STATE_STATUS.SUCCESS);
   }
-
-  React.useEffect(() => {
-    if (address) {
-      fetchNonce({ address });
-    }
-  }, [address]);
 
   // async function verify({ address, data }: { address: string; data: any }) {
   //   setStatus(STATE_STATUS.LOADING);
@@ -320,17 +315,21 @@ function AuthSignMessage() {
     }
   }
 
+  const onHandleClick = async () => {
+    if (address) {
+      await fetchNonce({ address });
+    }
+  };
+
   React.useEffect(() => {
     if (address && isSuccess) {
       verify({ address, data });
     }
   }, [address, isSuccess]);
 
-  const onHandleClick = async () => {
-    if (address) {
-      await fetchNonce({ address });
-    }
-  };
+  React.useEffect(() => {
+    if (address) fetchNonce({ address });
+  }, [address]);
 
   function RetrySignInButton() {
     return (
@@ -350,7 +349,7 @@ function AuthSignMessage() {
       <>
         <WalletModalHeader>
           <BackChevron />
-          <WalletModalTitle>Sign in to Safelaunch</WalletModalTitle>
+          <WalletModalTitle>Sign in to SafeLaunch</WalletModalTitle>
           <WalletModalDescription className="sr-only">
             Sign your account.
           </WalletModalDescription>
@@ -443,6 +442,7 @@ function RegisterUserForm() {
   }
 
   async function onSubmit(data: ProfileInput) {
+    console.log('amamam');
     setStatus(STATE_STATUS.LOADING);
     try {
       const result = await registerUser(data);

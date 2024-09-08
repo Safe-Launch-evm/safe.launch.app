@@ -1,5 +1,5 @@
 import { http, createConfig, cookieStorage, createStorage } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import { assetChainTestnet, mainnet } from 'wagmi/chains';
 import { injected, coinbaseWallet, walletConnect } from 'wagmi/connectors';
 
 // Make sure to replace the projectId with your own WalletConnect Project ID,
@@ -8,7 +8,7 @@ const projectId = '123...abc';
 
 export function getConfig() {
   return createConfig({
-    chains: [mainnet],
+    chains: [mainnet, assetChainTestnet],
     connectors: [
       injected({ target: 'metaMask' }),
       coinbaseWallet()
@@ -19,7 +19,8 @@ export function getConfig() {
       storage: cookieStorage
     }),
     transports: {
-      [mainnet.id]: http()
+      [mainnet.id]: http(),
+      [assetChainTestnet.id]: http()
     }
   });
 }

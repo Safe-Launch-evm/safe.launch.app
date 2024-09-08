@@ -27,7 +27,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { FormEvent, useEffect } from 'react';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId, useConnections, useWalletClient } from 'wagmi';
+import { SuccessTokenCreated, TokenRWA } from './utils';
+import SafeLaunch from '@/contract/safe-launch';
+import { assetChainTestnet } from 'viem/chains';
+import { config } from '@/lib/wagmi-config';
 
 interface FormSectionProps {
   [key: string]: React.ReactNode;
@@ -39,47 +43,57 @@ type ImageProps = {
 };
 
 export const CreateTokenFrom = () => {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { pendingConnector } = React.useContext(WalletContext);
-  // const [input, setInput] = React.useState<CreateTokenInput>();
   const [status, setStatus] = React.useState(STATE_STATUS.IDLE);
   const [uploadStatus, setUploadStatus] = React.useState(STATE_STATUS.IDLE);
   const [isPending, startTransition] = React.useTransition();
   const [component, setComponent] = React.useState<number>(0);
   const [imageSrc, setImageSrc] = React.useState<ImageProps | null>(null);
-  const isConnected = address && !pendingConnector;
+  const [formInputData, setFormInputData] = React.useState<any>();
+
+
+  const {
+    data: walletClient,
+    isError,
+    isLoading
+  } = useWalletClient({
+    account: address,
+    chainId: assetChainTestnet.id,
+    config
+  });
 
   const form = useZodForm({
     schema: createTokenSchema,
     defaultValues: { contractAddress: address }
   });
 
-  const { setValue } = form;
+  const { setValue, getFieldState } = form;
 
   useEffect(() => {
-    if (imageSrc) {
-      setValue('logoUrl', imageSrc.url);
-    }
-  }, [imageSrc, setValue]);
+    imageSrc && setValue('logoUrl', imageSrc.url);
+  }, [imageSrc]);
 
   function AddTokenForm() {
     function onSubmit(data: CreateTokenInput) {
-      if (imageSrc?.url) {
-        // setInput({ ...data, logoUrl: imageSrc.url });
-        setComponent(1);
-      }
+      setFormInputData(data);
+      if (imageSrc?.url) setComponent(1);
     }
 
     async function onUpload(formData: any) {
       setUploadStatus(STATE_STATUS.LOADING);
       try {
         const uploaded = await uploadLogo(formData);
-        if (uploaded.status !== 201) {
+
+        if (uploaded.status === 201) {
+          setImageSrc(uploaded.result);
+          setUploadStatus(STATE_STATUS.SUCCESS);
+          toast.success('Nice!', { description: 'Image uploaded.' });
+        } else {
           setImageSrc(null);
           setUploadStatus(STATE_STATUS.ERROR);
+          toast.error('Opps!', { description: 'Image upload failed.' });
         }
-        setImageSrc(uploaded.result);
-        setUploadStatus(STATE_STATUS.SUCCESS);
       } catch (error) {
         setImageSrc(null);
         setUploadStatus(STATE_STATUS.ERROR);
@@ -198,19 +212,29 @@ export const CreateTokenFrom = () => {
 
     async function onSubmit(data: CreateTokenInput) {
       setStatus(STATE_STATUS.LOADING);
+      const { name, symbol, liquidityAmount } = data;
+
       try {
+        if (!walletClient) return;
+        if (!liquidityAmount) throw new Error('Add liquidity to token');
+
+        const safelaunch = new SafeLaunch(walletClient, address);
+        const reciept = await safelaunch.createToken(name, symbol, liquidityAmount);
+
+        data.contractAddress = reciept.data.log.args.token;
         const result = await createToken(data);
+        formInputData.tokenId = result.result.unique_id;
+
         if (!result) {
           setStatus(STATE_STATUS.ERROR);
-          toast.error('Opps!', { description: 'An error occurred' });
-          return;
+          throw new Error('Creating token failed');
         }
+
         setStatus(STATE_STATUS.SUCCESS);
-      } catch (error) {
+      } catch (error: any) {
         setComponent(0);
         setStatus(STATE_STATUS.ERROR);
-        toast.error('Opps!', { description: 'An error occurred' });
-        return;
+        toast.error('Opps!', { description: error?.messsage ?? 'An error occurred' });
       }
     }
 
@@ -236,7 +260,7 @@ export const CreateTokenFrom = () => {
             <Input
               className="border-none px-0 py-3 focus:outline-none"
               placeholder="0.00 (Optional)"
-              {...form.register('totalSupply')}
+              {...form.register('liquidityAmount')}
             />
           </div>
           <div className="flex w-full items-center justify-center py-6">
@@ -255,24 +279,6 @@ export const CreateTokenFrom = () => {
     );
   }
 
-  function SuccessTokenCreated() {
-    return (
-      <div className="flex w-full flex-col items-center justify-center gap-6 px-2 py-6 md:w-[300px]">
-        <h2 className="text-[1.125rem]/[1.125rem] font-bold">Successfully created</h2>
-        <Image
-          src={'/images/meme_token.png'}
-          alt=""
-          width={185}
-          height={140}
-          className="size-[180px] rounded"
-        />
-        <Button asChild className="text-[1.125rem] font-medium">
-          <Link href={'/token'}>View token</Link>
-        </Button>
-      </div>
-    );
-  }
-
   const components: FormSectionProps = {
     0: <AddTokenForm />,
     1: <AddLiquidity />
@@ -280,24 +286,11 @@ export const CreateTokenFrom = () => {
 
   return (
     <div className="max-w-[570px] gap-10 rounded-lg border bg-card-200">
-      {status === STATE_STATUS.SUCCESS ? <SuccessTokenCreated /> : components[component]}
+      {status === STATE_STATUS.SUCCESS ? (
+        <SuccessTokenCreated formData={formInputData} />
+      ) : (
+        components[component]
+      )}
     </div>
   );
 };
-
-const TokenRWA = () => (
-  <div className="flex items-center justify-center gap-2 rounded-[22px] border px-2 py-1">
-    <Image
-      src={'/images/xend-icon.svg'}
-      alt="RWA"
-      width={22}
-      height={22}
-      className="pointer-events-none size-[22px] rounded-full"
-      priority
-    />
-
-    <div className="flex items-center gap-2">
-      <span className="text-[1rem]">RWA</span> <Icon.arrowDown className="size-3.5" />
-    </div>
-  </div>
-);

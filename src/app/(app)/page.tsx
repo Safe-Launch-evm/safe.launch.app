@@ -1,26 +1,30 @@
-import { MainTab } from '@/components/filter-tabs';
 import { Shell } from '@/components/shell';
 import { Button } from '@/components/ui/button';
-import { Search, Star, SortDescIcon } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import Banner from './_components/banner';
 import TokenCard from '@/components/cards/token-card';
 import { getCookieStorage } from '@/lib/cookie-storage';
-import { getUser } from '@/lib/actions/user';
 import { fetchTokens } from '@/lib/actions/token';
 import { formatAddress } from '@/lib/utils';
+import TokenToolbar from './token-toolbar';
 
 type HomeProps = {
-  searchParams: { tab: string };
+  searchParams: { tab: string; search: string };
 };
 
 export default async function Home({ searchParams }: HomeProps) {
   // const address = await getCookieStorage('accountKey');
   const currentTab = searchParams.tab === undefined ? 'tokens' : searchParams.tab;
   const favorites = currentTab === 'favorites' ? true : false;
+  const trending = currentTab === 'trending' ? true : false;
 
-  const tokens = await fetchTokens({ favorites });
+  const { favorites: likes, tokens } = await fetchTokens({
+    favorites,
+    trending,
+    search: searchParams.search
+  });
+
+  const { favorites: userLikes } = await fetchTokens({ favorites: true });
 
   return (
     <Shell className="pt-[220px]">
@@ -45,32 +49,11 @@ export default async function Home({ searchParams }: HomeProps) {
           <Banner name="SafeCoin" image="/images/banner.png" market_cap={28.22} href="/" />
         </div>
       </section>
-
-      <section className="flex w-full flex-col items-center justify-between gap-4 py-6 lg:flex-row">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-4 rounded-lg border border-card-foreground bg-card p-2">
-            <MainTab selected={currentTab} />
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-4 size-6 text-muted" />
-            <input
-              type="search"
-              placeholder="Search anything...."
-              className="w-full max-w-[434px] rounded-lg border border-border bg-card px-4 py-3 pl-11 font-inter text-[1.25rem] placeholder:text-[#CECECE]"
-            />
-          </div>
-          <div className="flex size-[44px] items-center justify-center rounded-full border bg-primary lg:size-[54px]">
-            <SortDescIcon size={22} />
-          </div>
-        </div>
-      </section>
+      <TokenToolbar currentTab={currentTab} />
       <section className="space-y-10">
         <h2 className="text-[1.5rem] font-bold lg:text-[2.5rem]">Tokens</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-7 xl:grid-cols-5">
-          {/* {[...Array(25)].map((_, index) => ( */}
-          {tokens?.map(token => {
+          {/* {tokens?.map(token => {
             return (
               <TokenCard
                 key={token.unique_id}
@@ -87,9 +70,60 @@ export default async function Home({ searchParams }: HomeProps) {
                 market_cap={22.8}
               />
             );
-          })}
+          })} */}
 
-          {/* ))} */}
+          {tokens !== null ? (
+            <>
+              {tokens.length >= 1 ? (
+                tokens.map(token => {
+                  const like = userLikes?.find(
+                    favorite => favorite.token_id === token.unique_id
+                  );
+                  return (
+                    <TokenCard
+                      key={token.unique_id}
+                      unique_id={token.unique_id}
+                      name={token.name}
+                      symbol={token.symbol}
+                      image={token.logo_url}
+                      creator_unique_id={token.creator.unique_id}
+                      user={like?.user}
+                      owner={
+                        token.creator.username
+                          ? token.creator.username
+                          : formatAddress(token.creator.wallet_address)
+                      }
+                      market_cap={22.8}
+                    />
+                  );
+                })
+              ) : (
+                <div></div>
+              )}
+            </>
+          ) : null}
+          {likes !== null ? (
+            <>
+              {likes.length >= 1 ? (
+                likes.map(favorite => {
+                  return (
+                    <TokenCard
+                      key={favorite.unique_id}
+                      unique_id={favorite.token_id}
+                      name={favorite.token.name}
+                      symbol={favorite.token.symbol}
+                      image={favorite.token.logo_url}
+                      creator_unique_id={favorite.token.creator_id}
+                      user={favorite.user}
+                      market_cap={22.8}
+                    />
+                  );
+                })
+              ) : (
+                <div></div>
+              )}
+            </>
+          ) : null}
         </div>
       </section>
     </Shell>
