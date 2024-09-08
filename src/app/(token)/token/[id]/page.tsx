@@ -15,7 +15,13 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { PlaceholderImage } from '@/components/placeholder-image';
 import AddComment from './_components/add-comment';
 import { fetchTokenComments } from '@/lib/actions/comment';
-import { _formatAddress, formatAddress, formatDateToNow, truncate } from '@/lib/utils';
+import {
+  _formatAddress,
+  formatAddress,
+  formatDateToNow,
+  toIntNumberFormat,
+  truncate
+} from '@/lib/utils';
 import SafeLaunch from '@/contract/safe-launch';
 import { useAccount, useWalletClient } from 'wagmi';
 import { assetChainTestnet } from 'viem/chains';
@@ -71,7 +77,6 @@ export default function TokenPage({ params }: { params: { id: string } }) {
     safeLaunch.getTokenCurveStats(token?.contract_address).then(res => setCurveStats(res));
     safeLaunch.getTokenMarketStats(token?.contract_address).then(res => setMarketStats(res));
   }, [walletClient, token]);
-
 
   useEffect(() => {
     mutateSingleToken(params.id);
@@ -135,8 +140,8 @@ export default function TokenPage({ params }: { params: { id: string } }) {
               />
             </div>
             <p className="text-[1.125rem]/[2rem]">
-              There are {marketStats?.circulatingSupply} {token?.symbol} available for sale
-              through the bonding curve, with the current balance of{' '}
+              There are {toIntNumberFormat(Number(marketStats?.circulatingSupply))} {token?.symbol}{' '}
+              available for sale through the bonding curve, with the current balance of{' '}
               {curveStats?.currentLiquidity} RWA in the curve. <br /> As the market cap
               progresses and reaches {curveStats?.targetLiquidity} RWA, the entire liquidity
               from the bonding curve will be subsequently burned, removing it from circulation.
@@ -198,7 +203,7 @@ export default function TokenPage({ params }: { params: { id: string } }) {
               <span>
                 <Link
                   target="__blank__"
-                  href={`https://scan-testnet.assetchain.org/address/${token?.contract_address}`}
+                  href={`https://scan-testnet.assetchain.org/token/${token?.contract_address}`}
                 >
                   {token && _formatAddress(token?.contract_address, 16)}
                 </Link>
@@ -206,7 +211,7 @@ export default function TokenPage({ params }: { params: { id: string } }) {
               <Copy size={24} />
             </div>
           </div>
-          <BuyAndSellCard />
+          <BuyAndSellCard token={token} />
         </div>
       </div>
     </Shell>

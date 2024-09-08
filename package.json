@@ -35,6 +35,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "emoji-mart": "^5.6.0",
+    "formik": "^2.4.6",
     "iconsax-react": "^0.0.8",
     "lucide-react": "^0.429.0",
     "next": "15.0.0-rc.0",

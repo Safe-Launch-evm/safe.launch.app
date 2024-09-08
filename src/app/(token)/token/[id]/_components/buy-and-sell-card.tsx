@@ -1,8 +1,9 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TabsContent } from '@radix-ui/react-tabs';
 import { BuyTokenForm } from './buy-token-form';
+import { SellTokenForm } from './sell-token-form';
 
-export default function BuyAndSellCard() {
+export default function BuyAndSellCard({ token }: { token: any }) {
   return (
     <div className="flex w-full items-center rounded border px-[23px] py-[26px]">
       <Tabs defaultValue="buy" className="w-full">
@@ -11,11 +12,14 @@ export default function BuyAndSellCard() {
             Buy
           </TabsTrigger>
           <TabsTrigger value="sell" variant={'pill'} className="rounded-l-none border-l-0">
-            sell
+            Sell
           </TabsTrigger>
         </TabsList>
         <TabsContent value="buy">
-          <BuyTokenForm />
+          <BuyTokenForm token={token} />
+        </TabsContent>
+        <TabsContent value="sell">
+          <SellTokenForm token={token} />
         </TabsContent>
       </Tabs>
     </div>

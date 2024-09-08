@@ -39,3 +39,8 @@ export function _formatAddress(address: string, gap: number) {
 export function formatDateToNow(date: Date | string | number) {
   return formatDistanceToNow(new Date(date), { addSuffix: true });
 }
+export function toIntNumberFormat(value: number) {
+  let roundedNumber = Math.round(((value ?? 0) + Number.EPSILON) * 100) / 100;
+  let formattedNumber = roundedNumber.toFixed(2);
+  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(Number(formattedNumber));
+}
