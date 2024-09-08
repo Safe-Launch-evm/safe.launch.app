@@ -14,7 +14,8 @@ const tabListVariants = cva('', {
     variant: {
       default: 'inline-flex items-center justify-start',
       pill: 'flex w-full  justify-center items-center self-stretch border rounded-lg',
-      secondary: 'flex w-full gap-4 rounded-lg border border-card-foreground bg-card p-2'
+      secondary:
+        'flex items-center justify-center gap-4 rounded-lg border border-card-foreground bg-card p-2'
     }
   },
   defaultVariants: {
@@ -51,10 +52,6 @@ const tabTriggerVariants = cva('disabled:pointer-events-none disabled:opacity-50
     variant: 'default'
   }
 });
-
-interface TabTriggerProps
-  extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>,
-    VariantProps<typeof tabTriggerVariants> {}
 
 interface TabTriggerProps
   extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>,

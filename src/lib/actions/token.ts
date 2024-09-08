@@ -119,7 +119,7 @@ export async function fetchTokens({
       tokens: !favorites ? (response.result as Token[]) : null
     };
   } catch (error) {
-    console.error('Error fetching tokens:', error);
+    // console.error('Error fetching tokens:', error);
     return { favorites: null, tokens: null };
   }
 }
