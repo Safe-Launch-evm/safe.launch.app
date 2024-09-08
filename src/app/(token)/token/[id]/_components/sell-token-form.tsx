@@ -14,8 +14,9 @@ import Image from 'next/image';
 import { assetChainTestnet } from 'viem/chains';
 import { useAccount, useWalletClient } from 'wagmi';
 import { config } from '@/lib/wagmi-config';
+import { Hex } from 'viem';
 
-export function BuyTokenForm({ token }: { token: Token }) {
+export function SellTokenForm({ token }: { token: Token }) {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient({
     account: address,
@@ -40,7 +41,7 @@ export function BuyTokenForm({ token }: { token: Token }) {
 
       const safeLaunch = new SafeLaunch(walletClient, address);
       const result = await safeLaunch
-        .buyToken(token?.contract_address, String(formik.values.amount))
+        .sellToken(token?.contract_address as Hex, String(formik.values.amount))
         .then(res => console.log(res));
     }
   });
@@ -52,16 +53,16 @@ export function BuyTokenForm({ token }: { token: Token }) {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center justify-center gap-2 rounded-[22px] border px-2 py-1">
             <Image
-              src={'/images/xend-icon.svg'}
+            src={token?.logo_url ?? '/images/xend-icon.svg'}
               alt="RWA"
               width={22}
               height={22}
-              className="pointer-events-none size-[22px]"
+              className="pointer-events-none size-[22px] rounded-full"
               priority
             />
 
             <div className="flex items-center gap-2">
-              <span className="text-[1rem]">RWA</span>{' '}
+              <span className="text-[1rem]">{token?.symbol}</span>{' '}
             </div>
           </div>
           {/* <span className="flex font-inter text-[1rem] text-primary">Set max slippage</span> */}

@@ -93,7 +93,13 @@ export default class SafeLaunch {
         try {
             const args = [SAFE_LAUNCH_ADDRESS, parseUnits(amount, 18)]
 
-            const estimatedGas = await this.contract.estimateGas.approve(args, { value: parseUnits(amount, 18) })
+            const tokenContract = getContract({
+                address: tokenAddress,
+                abi: TokenAbi,
+                client: { public: this.publicClient, wallet: this.walletClient },
+            })
+            // @ts-ignore
+            const estimatedGas = await tokenContract.estimateGas.approve(args)
             const gasLimit = BigInt(Math.floor(Number(estimatedGas) * 1.1))
 
             // @ts-ignore
@@ -104,15 +110,16 @@ export default class SafeLaunch {
                 args,
                 gas: gasLimit
             })
+            // console.log('dl',approveHash);return;
 
             const approveReceipt = await this.publicClient.waitForTransactionReceipt({ hash: approveHash });
-            console.log({ approveReceipt })
+            // console.log({ approveReceipt });return;
 
             const _args = [zeroAddress, tokenAddress, parseUnits(amount, 18), 0]
             const _estimatedGas = await this.contract.estimateGas.swap(_args, { value: parseUnits(amount, 18) })
             const _gasLimit = BigInt(Math.floor(Number(_estimatedGas) * 1.1))
 
-            const hash = await this.contract.write.swap(_args,{ value: parseUnits(amount, 18), gas: _gasLimit })
+            const hash = await this.contract.write.swap(_args, { value: parseUnits(amount, 18), gas: _gasLimit })
             const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
 
             return { ok: true, receipt };
