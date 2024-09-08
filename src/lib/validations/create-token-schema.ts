@@ -8,9 +8,10 @@ const socialLinksSchema = z.object({
 });
 
 export const createTokenSchema = z.object({
-  name: z.string().min(1, { message: 'Please provide a name for your token' }),
-  symbol: z.string().min(1, { message: 'Please provide a symbol for your token' }),
-  totalSupply: z.string().optional(),
+  name: z.string().min(1, { message: 'Provide a name for token' }),
+  symbol: z.string().min(1, { message: 'Provide a symbol for token' }),
+  liquidityAmount: z.string().optional(),
+  totalSupply: z.string().optional().default('1000000000'),
   image: z
     .any(
       z.instanceof(File).refine(file => file.size < 5 * 1024 * 1024, {
