@@ -1,4 +1,4 @@
-import { UserType } from '@/types';
+import { Token, TokenLike, UserType } from '@/types';
 import client from '../client';
 import { setCookieStorage } from '../cookie-storage';
 import { Request } from '../http';
@@ -22,6 +22,7 @@ export async function getUser({ address }: { address: string }): Promise<UserTyp
     return null;
   }
 }
+
 export async function registerUser(data: ProfileInput) {
   try {
     const user = await client(`/user/register`, { tag: 'user', formData: data });
@@ -61,9 +62,31 @@ export async function verifyNonce({ address, sig }: { address: string; sig: stri
   }
 }
 
-export async function getTokensCreatedByUser({ address }: { address: string }) {
+type FetchTokenResponse = {
+  error: boolean;
+  data: string;
+  code: number;
+  result: Token[] | TokenLike[];
+};
+
+type ResultPromise = {
+  favorites: TokenLike[];
+  tokens: Token[];
+};
+export async function getUserTokens(userId: string): Promise<ResultPromise> {
   try {
-    const tokens = await client(`/tokens/user/${address}`, {});
-    return tokens;
-  } catch (error) {}
+    const tokens: FetchTokenResponse = await client(`/tokens/user/${userId}`, {
+      tag: 'user_token'
+    });
+    const favorites: FetchTokenResponse = await client(`/token/favorite/${userId}`, {
+      tag: 'favorite'
+    });
+
+    return {
+      favorites: favorites ? (favorites.result as TokenLike[]) : [],
+      tokens: tokens ? (tokens.result as Token[]) : []
+    };
+  } catch (error) {
+    return { favorites: [], tokens: [] };
+  }
 }
