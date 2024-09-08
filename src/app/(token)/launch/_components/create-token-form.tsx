@@ -52,7 +52,6 @@ export const CreateTokenFrom = () => {
   const [imageSrc, setImageSrc] = React.useState<ImageProps | null>(null);
   const [formInputData, setFormInputData] = React.useState<any>();
 
-  console.log({ address, isConnected });
 
   const {
     data: walletClient,
