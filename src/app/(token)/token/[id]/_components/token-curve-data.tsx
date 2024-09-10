@@ -20,7 +20,6 @@ interface iMarketStats {
 }
 
 function calcCurvePercent(currentLiquidity: number, targetLiquidity: number): number {
-  (4.95 * 100) / 200;
   return (currentLiquidity * 100) / targetLiquidity;
 }
 
