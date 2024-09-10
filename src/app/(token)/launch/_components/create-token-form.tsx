@@ -32,7 +32,6 @@ import { SuccessTokenCreated, TokenRWA } from './utils';
 import SafeLaunch from '@/contract/safe-launch';
 import { assetChainTestnet } from 'viem/chains';
 import { config } from '@/lib/wagmi-config';
-import { getWalletClient, getConnections } from '@wagmi/core';
 import { createPublicClient, createWalletClient, http, custom, getContract } from 'viem';
 
 interface FormSectionProps {
@@ -53,58 +52,12 @@ export const CreateTokenFrom = () => {
   const [component, setComponent] = React.useState<number>(0);
   const [imageSrc, setImageSrc] = React.useState<ImageProps | null>(null);
   const [formInputData, setFormInputData] = React.useState<any>();
-  const connections = getConnections(config);
-  console.log({ connections });
-
-  // const { data: walletClient } = useWalletClient({
-  //   account: address,
-  //   chainId: assetChainTestnet.id,
-  //   config
-  // });
-
-  // let xx = Promise.resolve(() => {
-  //   const _walletClient = getWalletClient(config);
-  // });
-
-  // const _walletClient = getWalletClient(config, {
-  //   account: address,
-  //   chainId: assetChainTestnet.id
-  // }).then(console.log);
-
-  // const { data: walletClient } = useWalletClient({
-  //   onError(error) {
-  //     console.log('Error', error)
-  //   },
-  // })
-
-  // const [walletClient, setWalletClient] = useState<any>(null);
 
   const walletClient = createWalletClient({
     account: address,
     chain: assetChainTestnet,
     transport: custom(window.ethereum!)
   });
-  console.log({ walletClient });
-
-  /*   const fetchWalletClient = async () => {
-    try {
-      console.log({ address, isConnected });
-      const client = await getWalletClient(config, {
-        account: address,
-        chainId: assetChainTestnet.id
-      });
-      console.log('vvv', 'client');
-      setWalletClient(client);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchWalletClient();
-  }, []); */
-
-  // console.log({ address, isConnected, walletClient, config });
 
   const form = useZodForm({
     schema: createTokenSchema,
@@ -301,13 +254,13 @@ export const CreateTokenFrom = () => {
         </p>
 
         <Form form={form} onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-          <div className="flex w-full flex-col gap-6 rounded-lg border bg-input px-2.5 py-3.5">
+          <div className="flex w-full flex-col gap-3 rounded-lg border bg-input px-2.5 py-3.5">
             <div className="flex justify-end">
               <TokenRWA />
             </div>
             <Input
               className="border-none px-0 py-3 focus:outline-none"
-              placeholder="0.00 (Optional)"
+              placeholder="0.00 RWA"
               {...form.register('liquidityAmount')}
             />
           </div>
