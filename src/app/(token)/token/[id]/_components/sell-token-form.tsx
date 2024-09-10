@@ -14,14 +14,15 @@ import Image from 'next/image';
 import { assetChainTestnet } from 'viem/chains';
 import { useAccount, useWalletClient } from 'wagmi';
 import { config } from '@/lib/wagmi-config';
-import { Hex } from 'viem';
+import { Hex, createWalletClient, custom } from 'viem';
+import { toast } from 'sonner';
 
 export function SellTokenForm({ token }: { token: Token }) {
   const { address, isConnected } = useAccount();
-  const { data: walletClient } = useWalletClient({
+  const walletClient = createWalletClient({
     account: address,
-    chainId: assetChainTestnet.id,
-    config
+    chain: assetChainTestnet,
+    transport: custom(window.ethereum!)
   });
 
   const formik = useFormik({
@@ -29,20 +30,21 @@ export function SellTokenForm({ token }: { token: Token }) {
       amount: 0
     },
     onSubmit: async values => {
-      console.log({ values });
-      if (!walletClient) {
-        console.error('Wallet client not available');
-        return;
-      }
-      if (formik.values.amount == 0) {
-        console.error('Enter an amount');
-        return;
-      }
+      if (formik.values.amount == 0) throw new Error('Enter an amount.');
 
       const safeLaunch = new SafeLaunch(walletClient, address);
-      const result = await safeLaunch
-        .sellToken(token?.contract_address as Hex, String(formik.values.amount))
-        .then(res => console.log(res));
+      const reciept = await safeLaunch.sellToken(
+        token?.contract_address as Hex,
+        String(formik.values.amount)
+      );
+
+      if (!reciept?.ok) {
+        throw new Error(reciept.data);
+      } else {
+        toast.success('Nice!', {
+          description: `${values.amount} ${token.symbol} purchased successfully.`
+        });
+      }
     }
   });
 
@@ -53,7 +55,7 @@ export function SellTokenForm({ token }: { token: Token }) {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center justify-center gap-2 rounded-[22px] border px-2 py-1">
             <Image
-            src={token?.logo_url ?? '/images/xend-icon.svg'}
+              src={token?.logo_url ?? '/images/token-placeholder.webp'}
               alt="RWA"
               width={22}
               height={22}
