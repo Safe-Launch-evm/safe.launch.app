@@ -2,14 +2,14 @@ import { z } from 'zod';
 
 export const profileSchema = z.object({
   username: z
-  .string()
-  .min(3, {
-    message: 'Username must be at least 3 characters long'
-  })
-  .max(8, { message: "Username can't be longer than 8 characters" })
-  .regex(/^[a-zA-Z0-9_]+$/, {
-    message: 'Username can only contain letters, numbers, and underscores'
-  }),
+    .string()
+    .min(3, {
+      message: 'Username must be at least 3 characters long'
+    })
+    .max(8, { message: "Username can't be longer than 8 characters" })
+    .regex(/^[a-zA-Z0-9_]+$/, {
+      message: 'Username can only contain letters, numbers, and underscores'
+    }),
   bio: z.string(),
   image: z.any(
     z
