@@ -8,7 +8,9 @@ export const SuccessTokenCreated = (tokenInputData: any) => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-6 px-2 py-6 md:w-[300px]">
-      <h2 className="text-[1.125rem]/[1.125rem] font-bold">{formData.symbol} Successfully Launched</h2>
+      <h2 className="text-[1.125rem]/[1.125rem] font-bold">
+        {formData.symbol} Successfully Launched
+      </h2>
       <Image
         src={formData?.logoUrl}
         alt=""
@@ -22,7 +24,6 @@ export const SuccessTokenCreated = (tokenInputData: any) => {
     </div>
   );
 };
-
 
 export const TokenRWA = () => (
   <div className="flex items-center justify-center gap-2 rounded-[22px] border px-2 py-1">

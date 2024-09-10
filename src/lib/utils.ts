@@ -15,8 +15,9 @@ export function formatBytes(
   const accurateSizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'];
   if (bytes === 0) return '0 Byte';
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${sizeType === 'accurate' ? (accurateSizes[i] ?? 'Bytest') : (sizes[i] ?? 'Bytes')
-    }`;
+  return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
+    sizeType === 'accurate' ? (accurateSizes[i] ?? 'Bytest') : (sizes[i] ?? 'Bytes')
+  }`;
 }
 
 export function truncate(str: string, length: number) {
@@ -42,5 +43,7 @@ export function formatDateToNow(date: Date | string | number) {
 export function toIntNumberFormat(value: number) {
   let roundedNumber = Math.round(((value ?? 0) + Number.EPSILON) * 100) / 100;
   let formattedNumber = roundedNumber.toFixed(2);
-  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(Number(formattedNumber));
+  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(
+    Number(formattedNumber)
+  );
 }
