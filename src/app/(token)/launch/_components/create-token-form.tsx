@@ -32,7 +32,7 @@ import { SuccessTokenCreated, TokenRWA } from './utils';
 import SafeLaunch from '@/contract/safe-launch';
 import { assetChainTestnet } from 'viem/chains';
 import { config } from '@/lib/wagmi-config';
-import { getWalletClient, getConnections } from '@wagmi/core';
+// import { getWalletClient, getConnections } from '@wagmi/core';
 import { createPublicClient, createWalletClient, http, custom, getContract } from 'viem';
 
 interface FormSectionProps {
@@ -53,8 +53,8 @@ export const CreateTokenFrom = () => {
   const [component, setComponent] = React.useState<number>(0);
   const [imageSrc, setImageSrc] = React.useState<ImageProps | null>(null);
   const [formInputData, setFormInputData] = React.useState<any>();
-  const connections = getConnections(config);
-  console.log({ connections });
+  // const connections = getConnections(config);
+  // console.log({ connections });
 
   // const { data: walletClient } = useWalletClient({
   //   account: address,
