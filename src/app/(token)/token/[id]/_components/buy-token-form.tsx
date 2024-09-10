@@ -14,13 +14,15 @@ import Image from 'next/image';
 import { assetChainTestnet } from 'viem/chains';
 import { useAccount, useWalletClient } from 'wagmi';
 import { config } from '@/lib/wagmi-config';
+import { createWalletClient, custom } from 'viem';
+import { toast } from 'sonner';
 
 export function BuyTokenForm({ token }: { token: Token }) {
   const { address, isConnected } = useAccount();
-  const { data: walletClient } = useWalletClient({
+  const walletClient = createWalletClient({
     account: address,
-    chainId: assetChainTestnet.id,
-    config
+    chain: assetChainTestnet,
+    transport: custom(window.ethereum!)
   });
 
   const formik = useFormik({
@@ -28,20 +30,24 @@ export function BuyTokenForm({ token }: { token: Token }) {
       amount: 0
     },
     onSubmit: async values => {
-      console.log({ values });
-      if (!walletClient) {
-        console.error('Wallet client not available');
-        return;
-      }
-      if (formik.values.amount == 0) {
-        console.error('Enter an amount');
-        return;
-      }
+      try {
+        if (formik.values.amount == 0) throw new Error('Enter an amount.');
 
-      const safeLaunch = new SafeLaunch(walletClient, address);
-      const result = await safeLaunch
-        .buyToken(token?.contract_address, String(formik.values.amount))
-        .then(res => console.log(res));
+        const safeLaunch = new SafeLaunch(walletClient, address);
+        const reciept = await safeLaunch.buyToken(
+          token?.contract_address,
+          String(formik.values.amount)
+        );
+        if (!reciept?.ok) {
+          throw new Error(reciept.data);
+        } else {
+          toast.success('Nice!', {
+            description: `${values.amount} ${token.symbol} purchased successfully.`
+          });
+        }
+      } catch (error: any) {
+        toast.error('Opps!', { description: error?.messsage ?? 'An error occurred' });
+      }
     }
   });
 

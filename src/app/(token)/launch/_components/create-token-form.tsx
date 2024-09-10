@@ -25,13 +25,15 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { FormEvent, useEffect } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAccount, useChainId, useConnections, useWalletClient } from 'wagmi';
 import { SuccessTokenCreated, TokenRWA } from './utils';
 import SafeLaunch from '@/contract/safe-launch';
 import { assetChainTestnet } from 'viem/chains';
 import { config } from '@/lib/wagmi-config';
+import { getWalletClient, getConnections } from '@wagmi/core';
+import { createPublicClient, createWalletClient, http, custom, getContract } from 'viem';
 
 interface FormSectionProps {
   [key: string]: React.ReactNode;
@@ -51,17 +53,58 @@ export const CreateTokenFrom = () => {
   const [component, setComponent] = React.useState<number>(0);
   const [imageSrc, setImageSrc] = React.useState<ImageProps | null>(null);
   const [formInputData, setFormInputData] = React.useState<any>();
+  const connections = getConnections(config);
+  console.log({ connections });
 
+  // const { data: walletClient } = useWalletClient({
+  //   account: address,
+  //   chainId: assetChainTestnet.id,
+  //   config
+  // });
 
-  const {
-    data: walletClient,
-    isError,
-    isLoading
-  } = useWalletClient({
+  // let xx = Promise.resolve(() => {
+  //   const _walletClient = getWalletClient(config);
+  // });
+
+  // const _walletClient = getWalletClient(config, {
+  //   account: address,
+  //   chainId: assetChainTestnet.id
+  // }).then(console.log);
+
+  // const { data: walletClient } = useWalletClient({
+  //   onError(error) {
+  //     console.log('Error', error)
+  //   },
+  // })
+
+  // const [walletClient, setWalletClient] = useState<any>(null);
+
+  const walletClient = createWalletClient({
     account: address,
-    chainId: assetChainTestnet.id,
-    config
+    chain: assetChainTestnet,
+    transport: custom(window.ethereum!)
   });
+  console.log({ walletClient });
+
+  /*   const fetchWalletClient = async () => {
+    try {
+      console.log({ address, isConnected });
+      const client = await getWalletClient(config, {
+        account: address,
+        chainId: assetChainTestnet.id
+      });
+      console.log('vvv', 'client');
+      setWalletClient(client);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchWalletClient();
+  }, []); */
+
+  // console.log({ address, isConnected, walletClient, config });
 
   const form = useZodForm({
     schema: createTokenSchema,
@@ -215,13 +258,17 @@ export const CreateTokenFrom = () => {
       const { name, symbol, liquidityAmount } = data;
 
       try {
-        if (!walletClient) return;
+        // if (!walletClient) return;
         if (!liquidityAmount) throw new Error('Add liquidity to token');
 
         const safelaunch = new SafeLaunch(walletClient, address);
         const reciept = await safelaunch.createToken(name, symbol, liquidityAmount);
 
+        if (!reciept?.ok) throw new Error(reciept.data);
+
+        console.log('{error}', address, isConnected, reciept);
         data.contractAddress = reciept.data.log.args.token;
+
         const result = await createToken(data);
         formInputData.tokenId = result.result.unique_id;
 
@@ -232,6 +279,7 @@ export const CreateTokenFrom = () => {
 
         setStatus(STATE_STATUS.SUCCESS);
       } catch (error: any) {
+        console.log({ error });
         setComponent(0);
         setStatus(STATE_STATUS.ERROR);
         toast.error('Opps!', { description: error?.messsage ?? 'An error occurred' });
