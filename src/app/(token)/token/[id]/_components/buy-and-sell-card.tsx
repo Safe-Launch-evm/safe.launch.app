@@ -7,7 +7,7 @@ export default function BuyAndSellCard({ token }: { token: any }) {
   return (
     <div className="flex w-full items-center rounded border px-[23px] py-[26px]">
       <Tabs defaultValue="buy" className="w-full">
-        <TabsList>
+        <TabsList variant={'pill'}>
           <TabsTrigger variant={'pill'} value="buy" className="rounded-r-none border-r-0">
             Buy
           </TabsTrigger>

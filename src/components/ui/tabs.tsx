@@ -13,7 +13,7 @@ const tabListVariants = cva('', {
   variants: {
     variant: {
       default: 'inline-flex items-center justify-start',
-      pill: 'flex w-full  justify-center items-center self-stretch border rounded-lg',
+      pill: 'flex w-full justify-center items-center border rounded-lg',
       secondary:
         'flex items-center justify-center gap-4 rounded-lg border border-card-foreground bg-card p-2'
     }
