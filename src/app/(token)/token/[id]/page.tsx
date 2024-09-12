@@ -10,6 +10,7 @@ import { _formatAddress, formatAddress, formatDateToNow } from '@/lib/utils';
 import TokenCurveData from './_components/token-curve-data';
 import TokenHeader from './_components/token-header';
 import TokenDescription from './_components/token-description';
+import { Chart } from './_components/chart-container';
 
 export default async function TokenPage({ params }: { params: { id: string } }) {
   const token = await fetchSingleToken(params.id);
@@ -23,7 +24,8 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
       <div className="hidden flex-col gap-8 md:flex md:flex-row md:gap-10">
         <div className="flex w-full flex-col gap-10 md:w-3/4">
           <TokenDescription token={token} />
-          <div className="h-[361px] w-full rounded bg-card-foreground" />
+          {/* <div className="h-[361px] w-full rounded bg-card-foreground" /> */}
+          <Chart />
 
           {token && <TokenCurveData token={token} />}
           <Tabs defaultValue="comments">
