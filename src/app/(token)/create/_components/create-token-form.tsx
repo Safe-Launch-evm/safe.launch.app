@@ -61,13 +61,13 @@ export const CreateTokenFrom = () => {
 
   const form = useZodForm({
     schema: createTokenSchema,
-    defaultValues: { contractAddress: address }
+    defaultValues: { contractAddress: address, totalSupply: "1000000000" }
   });
 
-  const { setValue, getFieldState } = form;
+  const { setValue } = form;
 
   useEffect(() => {
-    imageSrc && setValue('logoUrl', imageSrc.url);
+    if (imageSrc) setValue('logoUrl', imageSrc.url);
   }, [imageSrc]);
 
   function AddTokenForm() {
@@ -195,7 +195,13 @@ export const CreateTokenFrom = () => {
           />
         </div>
         <div className="flex w-full items-center justify-center px-8 py-6">
-          {isConnected ? <Button fullWidth>Create Token</Button> : <ConnectWalletButton />}
+          {isConnected ? (
+            <Button type="submit" fullWidth>
+              Create Token
+            </Button>
+          ) : (
+            <ConnectWalletButton />
+          )}
         </div>
       </Form>
     );
@@ -236,6 +242,8 @@ export const CreateTokenFrom = () => {
         setComponent(0);
         setStatus(STATE_STATUS.ERROR);
         toast.error('Opps!', { description: error?.messsage ?? 'An error occurred' });
+      } finally {
+        setStatus(STATE_STATUS.IDLE);
       }
     }
 
@@ -267,10 +275,14 @@ export const CreateTokenFrom = () => {
           <div className="flex w-full items-center justify-center py-6">
             <Button
               fullWidth
-              disabled={!form.formState.isDirty || !form.formState.isValid || isPending}
+              disabled={
+                !form.formState.isDirty ||
+                !form.formState.isValid ||
+                status === STATE_STATUS.LOADING
+              }
             >
-              {isPending && status === STATE_STATUS.LOADING ? (
-                <LoaderCircle size={20} />
+              {status === STATE_STATUS.LOADING ? (
+                <LoaderCircle size={20} className="animate-spin" />
               ) : null}
               Launch Token
             </Button>

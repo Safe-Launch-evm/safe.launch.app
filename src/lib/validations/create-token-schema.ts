@@ -11,14 +11,13 @@ export const createTokenSchema = z.object({
   name: z.string().min(1, { message: 'Provide a name for token' }),
   symbol: z.string().min(1, { message: 'Provide a symbol for token' }),
   liquidityAmount: z.string().optional(),
-  totalSupply: z.string().optional().default('1000000000'),
-  image: z
-    .any(
-      z.instanceof(File).refine(file => file.size < 5 * 1024 * 1024, {
-        message: 'File size must be less than 5MB'
-      })
-    )
-    .optional(),
+  totalSupply: z.string().optional(),
+  image: z.any(),
+  // image: z.any(
+  //   z.instanceof(File).refine(file => file.size < 5 * 1024 * 1024, {
+  //     message: 'File size must be less than 5MB'
+  //   })
+  // ),
   logoUrl: z.string(),
   contractAddress: z.string(),
   description: z.string(),
