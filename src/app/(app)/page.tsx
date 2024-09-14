@@ -41,7 +41,7 @@ export default async function Home({ searchParams }: HomeProps) {
             </p>
           </div>
           <Button variant={'secondary'} asChild>
-            <Link href={'/launch'}>Create token</Link>
+            <Link href={'/create'}>Create token</Link>
           </Button>
         </div>
 
