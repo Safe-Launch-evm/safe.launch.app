@@ -125,14 +125,11 @@ export default class SafeLaunch {
       });
       // console.log({ approveReceipt });return;
 
-      const _args = [zeroAddress, tokenAddress, parseUnits(amount, 18), 0];
-      const _estimatedGas = await this.contract.estimateGas.swap(_args, {
-        value: parseUnits(amount, 18)
-      });
+      const _args = [tokenAddress, zeroAddress, parseUnits(amount, 18), 0];
+      const _estimatedGas = await this.contract.estimateGas.swap(_args, {});
       const _gasLimit = BigInt(Math.floor(Number(_estimatedGas) * 1.1));
 
       const hash = await this.contract.write.swap(_args, {
-        value: parseUnits(amount, 18),
         gas: _gasLimit
       });
       const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
