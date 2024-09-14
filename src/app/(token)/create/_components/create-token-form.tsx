@@ -61,7 +61,7 @@ export const CreateTokenFrom = () => {
 
   const form = useZodForm({
     schema: createTokenSchema,
-    defaultValues: { contractAddress: address, totalSupply: "1000000000" }
+    defaultValues: { contractAddress: address, totalSupply: '1000000000' }
   });
 
   const { setValue } = form;
@@ -242,8 +242,6 @@ export const CreateTokenFrom = () => {
         setComponent(0);
         setStatus(STATE_STATUS.ERROR);
         toast.error('Opps!', { description: error?.messsage ?? 'An error occurred' });
-      } finally {
-        setStatus(STATE_STATUS.IDLE);
       }
     }
 
