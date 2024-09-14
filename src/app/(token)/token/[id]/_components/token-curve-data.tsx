@@ -78,7 +78,7 @@ const TokenCurveData = ({ token }: { token: Token }) => {
 export default TokenCurveData;
 
 const HighlightText = ({ value }: { value: any }) => (
-  <span className="text-accent-200 font-bold">{value}</span>
+  <span className="font-bold text-accent-200">{value}</span>
 );
 
 export function TokenStats({ token }: { token: Token }) {

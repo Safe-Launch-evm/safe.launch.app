@@ -13,7 +13,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-
 // 2. Define your Wagmi config
 const config = getConfig();
 
