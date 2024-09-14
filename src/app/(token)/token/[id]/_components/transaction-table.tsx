@@ -19,7 +19,10 @@ import {
   useLazyQuery,
   gql
 } from '@apollo/client';
-import { timeAgo } from '@/lib/utils';
+import { cn, formatAddress, timeAgo } from '@/lib/utils';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { TableSkeleton } from '@/components/table-skeleton';
+import Link from 'next/link';
 
 const GET_ALL_TOKEN_SWAPS = gql`
   query GetAllTokenSwaps($tokenAddress: String!) {
@@ -47,36 +50,64 @@ export default function TransactionTable({ token }: { token: Token }) {
   }, [token, getTokenSwaps, data]);
 
   return (
-    <section className="w-full py-10">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">From</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>To</TableHead>
-            <TableHead className="text-right">Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {loading && <p>Loading...</p>}
-          {error && <p>Error: {error.message}</p>}
-          {data && data?.tokenSwaps?.nodes.length === 0 && (
-            <p>No swaps found for this token.</p>
-          )}
-          {data &&
-            data?.tokenSwaps?.nodes.length > 0 &&
-            data?.tokenSwaps?.nodes.map((transaction: any) => (
-              <TableRow key={transaction.id}>
-                <TableCell className="font-medium">{transaction.token}</TableCell>
-                <TableCell>{transaction.txnType}</TableCell>
-                <TableCell>{transaction.amount}</TableCell>
-                <TableCell>{transaction.user}</TableCell>
-                <TableCell className="text-right">{timeAgo(transaction.timestamp)}</TableCell>
+    <ScrollArea className="h-[70vh] w-full py-10">
+      {loading ? (
+        <TableSkeleton
+          columnCount={5}
+          rowCount={10}
+          withPagination={false}
+          showViewOptions={false}
+          shrinkZero={true}
+        />
+      ) : (
+        <div className="w-full overflow-hidden py-[10]">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Wallet</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>To</TableHead>
+                <TableHead className="text-right">Date</TableHead>
               </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-    </section>
+            </TableHeader>
+            <TableBody>
+              {data && data?.tokenSwaps?.nodes.length >= 1 ? (
+                data?.tokenSwaps?.nodes.map((transaction: any) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell className="font-medium">
+                      <Link
+                        href={`https://scan-testnet.assetchain.org/tx/${transaction.id}`}
+                        target="__blank"
+                      >
+                        {formatAddress(transaction.token)}
+                      </Link>
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        transaction.txnType === 'BUY' ? 'text-green-700' : 'text-accent-200'
+                      )}
+                    >
+                      {transaction.txnType}
+                    </TableCell>
+                    <TableCell>{transaction.amount}</TableCell>
+                    <TableCell>{formatAddress(transaction.user)}</TableCell>
+                    <TableCell className="text-right">
+                      {timeAgo(transaction.timestamp)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    No transactions found for this token
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </ScrollArea>
   );
 }

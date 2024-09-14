@@ -12,7 +12,6 @@ import TokenHeader from './_components/token-header';
 import TokenDescription from './_components/token-description';
 import { Chart } from './_components/chart-container';
 
-
 export default async function TokenPage({ params }: { params: { id: string } }) {
   const token = await fetchSingleToken(params.id);
   const comments = await fetchTokenComments(params.id);
