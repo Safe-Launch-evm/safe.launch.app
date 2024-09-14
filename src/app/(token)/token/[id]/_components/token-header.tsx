@@ -14,7 +14,7 @@ export default function TokenHeader({ token }: { token: Token }) {
             <span> Created by</span>
             <Link
               href={`/profile/${token.creator_id}`}
-              className="hover:text-accent-200 text-primary"
+              className="text-primary hover:text-accent-200"
             >
               {token.creator.username ?? formatAddress(token.creator.wallet_address)}
             </Link>
