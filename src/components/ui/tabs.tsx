@@ -13,7 +13,7 @@ const tabListVariants = cva('', {
   variants: {
     variant: {
       default: 'inline-flex items-center justify-start',
-      pill: 'flex w-full  justify-center items-center self-stretch border rounded-lg',
+      pill: 'flex w-full justify-center items-center border rounded-lg',
       secondary:
         'flex items-center justify-center gap-4 rounded-lg border border-card-foreground bg-card p-2'
     }
@@ -43,7 +43,7 @@ const tabTriggerVariants = cva('disabled:pointer-events-none disabled:opacity-50
     variant: {
       default:
         'border-b border-card-foreground flex items-start justify-center  p-3 text-[1rem] font-inter text-muted data-[state=active]:border-primary data-[state=active]:text-primary',
-      pill: 'flex items-center min-w-[190px] border w-full h-full justify-center p-3 gap-2 rounded-lg text-[1.5rem] font-bold data-[state=active]:text-foreground/[0.8] data-[state=active]:bg-secondary',
+      pill: 'flex items-center w-full lg:min-w-[190px] h-full text-[#3E3E3E] justify-center p-3 gap-2 rounded-lg text-[1.25rem] lg:text-[1.5rem] font-bold data-[state=active]:text-foreground/[0.8] data-[state=active]:bg-secondary',
       secondary:
         'flex items-center lg:h-[36px] h-6 p-2 lg:p-3 font-medium font-inter text-[1rem] rounded border w-full justify-center py-2 px-3 gap-2 border-card/[0.20] data-[state=active]:text-primary data-[state=active]:border-primary'
     }

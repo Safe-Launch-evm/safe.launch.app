@@ -14,9 +14,6 @@ const config = {
     },
     extend: {
       colors: {
-        border: '#3E3E3E',
-        input: '#EEEEEE',
-        ring: 'hsl(var(--ring))',
         background: '#E9EAED',
         foreground: '#3E3E3E',
         primary: {
@@ -37,16 +34,27 @@ const config = {
         },
         accent: {
           DEFAULT: '#D2DCF1',
-          foreground: '#6100FF'
+          foreground: '#6100FF',
+          200: '#F5841F'
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))'
         },
+        border: '#3E3E3E',
+        input: '#EEEEEE',
+        ring: 'hsl(var(--ring))',
         card: {
           DEFAULT: '#EEEEEE',
           200: 'E3E3E3',
           foreground: '#D9D9D9'
+        },
+        chart: {
+          '1': 'hsl(var(--chart-1))',
+          '2': 'hsl(var(--chart-2))',
+          '3': 'hsl(var(--chart-3))',
+          '4': 'hsl(var(--chart-4))',
+          '5': 'hsl(var(--chart-5))'
         }
       },
       fontFamily: {
@@ -57,24 +65,32 @@ const config = {
         dip: '0px 4px 0px 0px #3E3E3E',
         btn: '0px 0px 0px 2px #3E3E3E'
       },
-      // borderRadius: {
-      //   lg: "var(--radius)",
-      //   md: "calc(var(--radius) - 2px)",
-      //   sm: "calc(var(--radius) - 4px)",
-      // },
       keyframes: {
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
+          from: {
+            height: '0'
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)'
+          }
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
+          from: {
+            height: 'var(--radix-accordion-content-height)'
+          },
+          to: {
+            height: '0'
+          }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out'
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)'
       }
     }
   },

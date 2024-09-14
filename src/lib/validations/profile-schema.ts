@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+const imageSchema =
+  typeof File !== 'undefined'
+    ? z.instanceof(File).refine(file => file.size < 5 * 1024 * 1024, {
+        message: 'File size must be less than 5MB'
+      })
+    : z.any();
+
 export const profileSchema = z.object({
   username: z
     .string()
@@ -11,15 +18,16 @@ export const profileSchema = z.object({
       message: 'Username can only contain letters, numbers, and underscores'
     }),
   bio: z.string(),
-  image: z.any(
-    z
-      .instanceof(File)
-      .refine(file => file.size < 5 * 1024 * 1024, {
-        message: 'File size must be less than 5MB'
-      })
-      .optional()
-      .nullish()
-  ),
+  image: imageSchema.optional().nullish(),
+  // image: z.any(
+  //   z
+  //     .instanceof(File)
+  //     .refine(file => file.size < 5 * 1024 * 1024, {
+  //       message: 'File size must be less than 5MB'
+  //     })
+  //     .optional()
+  //     .nullish()
+  // ),
   profileImage: z.string().optional().nullish(),
   walletAddress: z.string()
 });

@@ -18,7 +18,7 @@ export default function Comment({ ...item }: CommentProps) {
             alt=""
             width={40}
             height={40}
-            className="size-10 shrink-0 rounded-full"
+            className="size-6 shrink-0 rounded-full lg:size-10"
             priority
           />
 
