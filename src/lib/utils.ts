@@ -47,3 +47,21 @@ export function toIntNumberFormat(value: number) {
     Number(formattedNumber)
   );
 }
+
+export function timeAgo(timestamp: any) {
+  const now = Math.floor(Date.now() / 1000); // Get current time in seconds
+  const diff = now - timestamp; // Time difference in seconds
+
+  if (diff < 60) {
+    return `${diff} second${diff === 1 ? '' : 's'} ago`;
+  } else if (diff < 3600) {
+    const min = Math.floor(diff / 60);
+    return `${min} minute${min === 1 ? '' : 's'} ago`;
+  } else if (diff < 86400) {
+    const hrs = Math.floor(diff / 3600);
+    return `${hrs} hour${hrs === 1 ? '' : 's'} ago`;
+  } else {
+    const days = Math.floor(diff / 86400);
+    return `${days} day${days === 1 ? '' : 's'} ago`;
+  }
+}

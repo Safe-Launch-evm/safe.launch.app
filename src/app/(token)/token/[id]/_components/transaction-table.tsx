@@ -1,3 +1,4 @@
+'use client';
 import {
   Table,
   TableBody,
@@ -8,9 +9,43 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { useEffect, useState } from 'react';
 import { transactions } from '@/config/site-config';
+import { Token } from '@/types';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useLazyQuery,
+  gql
+} from '@apollo/client';
+import { timeAgo } from '@/lib/utils';
 
-export default function TransactionTable() {
+const GET_ALL_TOKEN_SWAPS = gql`
+  query GetAllTokenSwaps($tokenAddress: String!) {
+    tokenSwaps(filter: { token: { equalTo: $tokenAddress } }, orderBy: TIMESTAMP_DESC) {
+      nodes {
+        id
+        token
+        txnType
+        amount
+        fee
+        timestamp
+        user
+      }
+    }
+  }
+`;
+export default function TransactionTable({ token }: { token: Token }) {
+  const [getTokenSwaps, { loading, error, data }] = useLazyQuery(GET_ALL_TOKEN_SWAPS);
+
+  useEffect(() => {
+    if (token) {
+      getTokenSwaps({ variables: { tokenAddress: token?.contract_address } });
+    }
+    console.log(data?.tokenSwaps?.nodes, 'Transaction');
+  }, [token, getTokenSwaps, data]);
+
   return (
     <section className="w-full py-10">
       <Table>
@@ -24,15 +59,22 @@ export default function TransactionTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {transactions.map((transaction, index) => (
-            <TableRow key={index}>
-              <TableCell className="font-medium">{transaction.from}</TableCell>
-              <TableCell>{transaction.type}</TableCell>
-              <TableCell>{transaction.amount}</TableCell>
-              <TableCell>{transaction.to}</TableCell>
-              <TableCell className="text-right">{transaction.date}</TableCell>
-            </TableRow>
-          ))}
+          {loading && <p>Loading...</p>}
+          {error && <p>Error: {error.message}</p>}
+          {data && data?.tokenSwaps?.nodes.length === 0 && (
+            <p>No swaps found for this token.</p>
+          )}
+          {data &&
+            data?.tokenSwaps?.nodes.length > 0 &&
+            data?.tokenSwaps?.nodes.map((transaction: any) => (
+              <TableRow key={transaction.id}>
+                <TableCell className="font-medium">{transaction.token}</TableCell>
+                <TableCell>{transaction.txnType}</TableCell>
+                <TableCell>{transaction.amount}</TableCell>
+                <TableCell>{transaction.user}</TableCell>
+                <TableCell className="text-right">{timeAgo(transaction.timestamp)}</TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </section>
