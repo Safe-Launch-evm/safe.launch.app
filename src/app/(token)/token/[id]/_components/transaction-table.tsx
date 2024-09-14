@@ -23,6 +23,7 @@ import { cn, formatAddress, timeAgo } from '@/lib/utils';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { TableSkeleton } from '@/components/table-skeleton';
 import Link from 'next/link';
+import { formatEther } from 'viem';
 
 const GET_ALL_TOKEN_SWAPS = gql`
   query GetAllTokenSwaps($tokenAddress: String!) {
@@ -64,7 +65,7 @@ export default function TransactionTable({ token }: { token: Token }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Wallet</TableHead>
+                <TableHead className="w-[100px]">Txns</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>To</TableHead>
@@ -80,17 +81,17 @@ export default function TransactionTable({ token }: { token: Token }) {
                         href={`https://scan-testnet.assetchain.org/tx/${transaction.id}`}
                         target="__blank"
                       >
-                        {formatAddress(transaction.token)}
+                        {formatAddress(transaction.id)}
                       </Link>
                     </TableCell>
                     <TableCell
                       className={cn(
-                        transaction.txnType === 'BUY' ? 'text-green-700' : 'text-accent-200'
+                        transaction.txnType === 'BUY' ? 'text-green-700' : 'text-destructive'
                       )}
                     >
                       {transaction.txnType}
                     </TableCell>
-                    <TableCell>{transaction.amount}</TableCell>
+                    <TableCell>{formatEther(transaction.amount)}</TableCell>
                     <TableCell>{formatAddress(transaction.user)}</TableCell>
                     <TableCell className="text-right">
                       {timeAgo(transaction.timestamp)}
