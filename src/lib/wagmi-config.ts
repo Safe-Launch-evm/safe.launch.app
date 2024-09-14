@@ -8,7 +8,7 @@ const projectId = '123...abc';
 
 export function getConfig() {
   return createConfig({
-    chains: [mainnet, assetChainTestnet],
+    chains: [assetChainTestnet],
     connectors: [
       injected({ target: 'metaMask' }),
       coinbaseWallet()
@@ -19,8 +19,8 @@ export function getConfig() {
       storage: cookieStorage
     }),
     transports: {
-      [mainnet.id]: http(),
-      [assetChainTestnet.id]: http()
+      [assetChainTestnet.id]: http(),
+      [mainnet.id]: http()
     }
   });
 }

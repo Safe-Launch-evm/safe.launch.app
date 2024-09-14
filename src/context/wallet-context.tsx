@@ -12,6 +12,12 @@ import {
 import { deleteCookieItem, getCookieStorage, setCookieStorage } from '@/lib/cookie-storage';
 import { AlertDialog } from '@/components/ui/alert-dialog';
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 const MODAL_CLOSE_DURATION = 320;
 
 export const WalletContext = React.createContext<{
