@@ -14,12 +14,6 @@ import { toast } from 'sonner';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 
-// type AddCommentProps = {
-//   symbol: string;
-//   name: string;
-//   image: string;
-// };
-
 export default function AddComment() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
@@ -100,7 +94,7 @@ export default function AddComment() {
             <div className="flex items-center gap-4">
               <button
                 type="button"
-                className="rounded-full bg-transparent p-2 transition-colors duration-200 ease-in hover:bg-primary/20 hover:text-primary"
+                className="hidden rounded-full bg-transparent p-2 transition-colors duration-200 ease-in hover:bg-primary/20 hover:text-primary lg:block"
                 onClick={() => setShowEmojiDialog(!showEmojiDialog)}
               >
                 <Smile className="size-6" />

@@ -14,9 +14,6 @@ const config = {
     },
     extend: {
       colors: {
-        border: '#3E3E3E',
-        input: '#EEEEEE',
-        ring: 'hsl(var(--ring))',
         background: '#E9EAED',
         foreground: '#3E3E3E',
         primary: {
@@ -37,12 +34,16 @@ const config = {
         },
         accent: {
           DEFAULT: '#D2DCF1',
-          foreground: '#6100FF'
+          foreground: '#6100FF',
+          200: '#F5841F'
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))'
         },
+        border: '#3E3E3E',
+        input: '#EEEEEE',
+        ring: 'hsl(var(--ring))',
         card: {
           DEFAULT: '#EEEEEE',
           200: 'E3E3E3',

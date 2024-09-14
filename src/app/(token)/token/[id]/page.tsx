@@ -7,7 +7,7 @@ import { fetchSingleToken } from '@/lib/actions/token';
 import AddComment from './_components/add-comment';
 import { fetchTokenComments } from '@/lib/actions/comment';
 import { _formatAddress, formatAddress, formatDateToNow } from '@/lib/utils';
-import TokenCurveData from './_components/token-curve-data';
+import TokenCurveData, { TokenStats } from './_components/token-curve-data';
 import TokenHeader from './_components/token-header';
 import TokenDescription from './_components/token-description';
 import { Chart } from './_components/chart-container';
@@ -25,7 +25,7 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
         <div className="flex w-full flex-col gap-10 md:w-3/4">
           <TokenDescription token={token} />
           {/* <div className="h-[361px] w-full rounded bg-card-foreground" /> */}
-          <Chart />
+          {/* <Chart /> */}
 
           {token && <TokenCurveData token={token} />}
           <Tabs defaultValue="comments">
@@ -66,6 +66,7 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
         <div className="flex w-full flex-col gap-4 md:w-[38%]">
           <TokenHeader token={token} />
           <BuyAndSellCard token={token} />
+          <TokenStats token={token} />
         </div>
       </div>
       {/* mobile */}
@@ -123,7 +124,10 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
             </div>
           </TabsContent>
           <TabsContent value="buy_sell">
-            <BuyAndSellCard token={token} />
+            <div className="w-full py-4">
+              <BuyAndSellCard token={token} />
+            </div>
+            <TokenStats token={token} />
           </TabsContent>
         </Tabs>
       </section>

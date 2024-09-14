@@ -70,16 +70,3 @@
     @apply bg-background font-bricolage text-foreground;
   }
 }
-
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background font-bricolage text-foreground;
-  }
-}
