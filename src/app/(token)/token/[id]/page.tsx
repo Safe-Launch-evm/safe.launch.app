@@ -58,7 +58,7 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
               </section>
             </TabsContent>
             <TabsContent value="transactions">
-              <TransactionTable />
+              <TransactionTable token={token} />
             </TabsContent>
           </Tabs>
         </div>
@@ -118,7 +118,7 @@ export default async function TokenPage({ params }: { params: { id: string } }) 
                   </section>
                 </TabsContent>
                 <TabsContent value="transactions">
-                  <TransactionTable />
+                  <TransactionTable token={token} />
                 </TabsContent>
               </Tabs>
             </div>

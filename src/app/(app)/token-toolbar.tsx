@@ -87,7 +87,7 @@ export default function TokenToolbar({ currentTab }: ToolbarProps) {
 
 export const MainTab = ({ selected }: { selected: string }) => {
   const { address } = useAccount();
-  const tabs = ['tokens', 'favorites', 'following', 'scams'];
+  const tabs = ['tokens', 'favorites'];
   return (
     <>
       {tabs.map(tab => {
