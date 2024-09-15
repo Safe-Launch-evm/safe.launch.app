@@ -68,7 +68,7 @@ export function SellTokenForm({ token }: { token: Token }) {
         throw new Error(reciept.data);
       } else {
         toast.success('Success!', {
-          description: `${data.amount} ${token.symbol} purchased successfully.`
+          description: `${data.amount} ${token.symbol} sold successfully.`
         });
       }
     } catch (error: any) {

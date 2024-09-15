@@ -65,7 +65,8 @@ const TokenCurveData = ({ token }: { token: Token }) => {
         There are{' '}
         <HighlightText value={toIntNumberFormat(Number(marketStats?.circulatingSupply))} />{' '}
         <HighlightText value={token?.symbol} /> available for sale through the bonding curve,
-        with the current balance of <HighlightText value={curveStats?.currentLiquidity} /> RWA
+        with the current balance of{' '}
+        <HighlightText value={toIntNumberFormat(Number(curveStats?.currentLiquidity))} /> RWA
         in the curve. As the market cap progresses and reaches{' '}
         <HighlightText value={curveStats?.targetLiquidity} /> RWA, the entire LP tokens in the
         bonding curve will be burned, providing a base liquidity for{' '}
@@ -78,7 +79,7 @@ const TokenCurveData = ({ token }: { token: Token }) => {
 export default TokenCurveData;
 
 const HighlightText = ({ value }: { value: any }) => (
-  <span className="text-accent-200 font-bold">{value}</span>
+  <span className="font-bold text-accent-200">{value}</span>
 );
 
 export function TokenStats({ token }: { token: Token }) {
@@ -109,8 +110,14 @@ export function TokenStats({ token }: { token: Token }) {
         title="Price"
         value={`${toIntNumberFormat(Number(marketStats.price))} ${token.symbol}`}
       />
-      <TokenStatsCard title="Marketcap" value={`${marketStats.marketcap}`} />
-      <TokenStatsCard title="Liquidity" value={`${marketStats.liquidity}`} />
+      <TokenStatsCard
+        title="Marketcap"
+        value={`${toIntNumberFormat(marketStats.marketcap)}`}
+      />
+      <TokenStatsCard
+        title="Liquidity"
+        value={`${toIntNumberFormat(Number(marketStats.liquidity))}`}
+      />
       <TokenStatsCard
         title="Circulating Supply"
         value={`${toIntNumberFormat(Number(marketStats?.circulatingSupply))}`}

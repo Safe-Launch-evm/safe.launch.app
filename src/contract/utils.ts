@@ -7,7 +7,7 @@ export const FACTORY_ADDRESS = '0xf509c3FbbBa099cD5D949C6621C218B3E52670F8';
 export const WRWA_ADDRESS = '0x0FA7527F1050bb9F9736828B689c652AB2c483ef';
 export const POOL_FEE = '500';
 
-export const PRICING_CURVE_TARGET = 200; // 200 RWA
+export const PRICING_CURVE_TARGET = 50; // 50 RWA
 export const SAFE_LAUNCH_ADDRESS = '0x2B7C1342Cc64add10B2a79C8f9767d2667DE64B2';
 export const RPC_URL = 'https://enugu-rpc.assetchain.org';
 export const AddLiquidityAbi: AbiEvent = {
