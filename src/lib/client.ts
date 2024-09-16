@@ -9,7 +9,7 @@ export default async function client(url: string, data: DataProps) {
 
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const origin = process.env.NEXT_PUBLIC_APP_CLIENT ?? '';
-
+  
   const res = await fetch(`${BASE_URL}${url}`, {
     method: formData ? 'POST' : 'GET',
     next: { tags: [`${tag}`] },

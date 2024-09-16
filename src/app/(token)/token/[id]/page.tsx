@@ -7,7 +7,7 @@ import { fetchSingleToken } from '@/lib/actions/token';
 import AddComment from './_components/add-comment';
 import { fetchTokenComments } from '@/lib/actions/comment';
 import { _formatAddress, formatAddress, formatDateToNow } from '@/lib/utils';
-import TokenCurveData, { TokenStats } from './_components/token-curve-data';
+import { TokenCurveData, TokenStats } from './_components/token-curve-data';
 import TokenHeader from './_components/token-header';
 import TokenDescription from './_components/token-description';
 import { Chart } from './_components/chart-container';

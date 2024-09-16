@@ -40,12 +40,36 @@ export function _formatAddress(address: string, gap: number) {
 export function formatDateToNow(date: Date | string | number) {
   return formatDistanceToNow(new Date(date), { addSuffix: true });
 }
-export function toIntNumberFormat(value: number) {
-  let roundedNumber = Math.round(((value ?? 0) + Number.EPSILON) * 100) / 100;
-  let formattedNumber = roundedNumber.toFixed(2);
-  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(
-    Number(formattedNumber)
-  );
+// export function toIntNumberFormat(value: number) {
+//   let roundedNumber = Math.round(((value ?? 0) + Number.EPSILON) * 100) / 100;
+//   let formattedNumber = roundedNumber.toFixed(2);
+//   return new Intl.NumberFormat('en-US', { minimumFractionDigits: 5 }).format(
+//     Number(formattedNumber)
+//   );
+// }
+export function toIntNumberFormat(value: number, decimalPlaces: number = 5): string {
+  // Handle the case where the value is 0
+  if (value === 0) {
+    return "0".padEnd(decimalPlaces + 2, "0");
+  }
+
+  // Calculate the factor for rounding
+  const factor = Math.pow(10, decimalPlaces);
+
+  // Round up to the specified number of decimal places
+  const roundedNumber = Math.ceil(((value ?? 0) + Number.EPSILON) * factor) / factor;
+
+  // Convert to string and split into integer and decimal parts
+  const [integerPart, decimalPart = ""] = roundedNumber.toString().split(".");
+
+  // Format the integer part with thousands separators
+  const formattedIntegerPart = new Intl.NumberFormat('en-US').format(Number(integerPart));
+
+  // Pad the decimal part to the specified number of places
+  const formattedDecimalPart = decimalPart.padEnd(decimalPlaces, "0");
+
+  // Combine the parts
+  return `${formattedIntegerPart}.${formattedDecimalPart}`;
 }
 
 export function timeAgo(timestamp: any) {

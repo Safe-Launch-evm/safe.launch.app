@@ -2,7 +2,7 @@
 import { Icon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import Form, { useZodForm } from '@/components/ui/form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SafeLaunch from '@/contract/safe-launch';
 import { SwapTokenInput, swapTokenSchema } from '@/lib/validations/swap-token-schema';
 import { useFormik } from 'formik';
@@ -21,11 +21,26 @@ export function SellTokenForm({ token }: { token: Token }) {
   const { address, isConnected } = useAccount();
   const [status, setStatus] = useState<STATE_STATUS>(STATE_STATUS.IDLE);
 
-  const walletClient = createWalletClient({
-    account: address,
-    chain: assetChainTestnet,
-    transport: window && custom(window?.ethereum!)
-  });
+  const [walletClient, setWalletClient] = useState<any>();
+
+  // const walletClient = createWalletClient({
+  //   account: address,
+  //   chain: assetChainTestnet,
+  //   transport: window && custom(window?.ethereum!)
+  // });
+
+  useEffect(() => {
+    if (!window.ethereum) {
+      console.error('Install browser wallet.');
+      return;
+    }
+    const client = createWalletClient({
+      account: address,
+      chain: assetChainTestnet,
+      transport: window && custom(window?.ethereum!)
+    });
+    setWalletClient(client);
+  }, []);
 
   const form = useZodForm({
     schema: swapTokenSchema
