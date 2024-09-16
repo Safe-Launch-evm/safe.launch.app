@@ -43,11 +43,13 @@ const TokenCurveData = ({ token }: { token: Token }) => {
   });
 
   useEffect(() => {
-    if (!walletClient || !token) return;
+    // if (!walletClient || !token) return;
 
-    const safeLaunch = new SafeLaunch(walletClient, address);
-    safeLaunch.getTokenCurveStats(token?.contract_address).then(res => setCurveStats(res));
-    safeLaunch.getTokenMarketStats(token?.contract_address).then(res => setMarketStats(res));
+    if (walletClient) {
+      const safeLaunch = new SafeLaunch(walletClient, address);
+      safeLaunch.getTokenCurveStats(token?.contract_address).then(res => setCurveStats(res));
+      safeLaunch.getTokenMarketStats(token?.contract_address).then(res => setMarketStats(res));
+    }
   }, []);
 
   return (
@@ -99,8 +101,10 @@ export function TokenStats({ token }: { token: Token }) {
   useEffect(() => {
     if (!walletClient || !token) return;
 
-    const safeLaunch = new SafeLaunch(walletClient, address);
-    safeLaunch.getTokenMarketStats(token?.contract_address).then(res => setMarketStats(res));
+    if (walletClient) {
+      const safeLaunch = new SafeLaunch(walletClient, address);
+      safeLaunch.getTokenMarketStats(token?.contract_address).then(res => setMarketStats(res));
+    }
   }, []);
 
   return (
