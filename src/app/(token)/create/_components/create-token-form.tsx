@@ -56,7 +56,7 @@ export const CreateTokenFrom = () => {
   const walletClient = createWalletClient({
     account: address,
     chain: assetChainTestnet,
-    transport: custom(window.ethereum!)
+    transport: window && custom(window?.ethereum!)
   });
 
   const form = useZodForm({

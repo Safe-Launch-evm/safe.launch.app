@@ -24,7 +24,7 @@ export function SellTokenForm({ token }: { token: Token }) {
   const walletClient = createWalletClient({
     account: address,
     chain: assetChainTestnet,
-    transport: custom(window.ethereum!)
+    transport: window && custom(window?.ethereum!)
   });
 
   const form = useZodForm({

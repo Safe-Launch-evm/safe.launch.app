@@ -39,7 +39,7 @@ const TokenCurveData = ({ token }: { token: Token }) => {
 
   const walletClient = createWalletClient({
     chain: assetChainTestnet,
-    transport: custom(window.ethereum!)
+    transport: window && custom(window?.ethereum!)
   });
 
   useEffect(() => {
@@ -94,7 +94,7 @@ export function TokenStats({ token }: { token: Token }) {
 
   const walletClient = createWalletClient({
     chain: assetChainTestnet,
-    transport: custom(window.ethereum!)
+    transport: custom(window?.ethereum!)
   });
 
   useEffect(() => {
