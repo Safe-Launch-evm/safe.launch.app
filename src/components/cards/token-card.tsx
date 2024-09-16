@@ -79,7 +79,7 @@ export default function TokenCard({ ...token }: TokenCardProps) {
           ${token.symbol}
         </dd>
         <dd className="text-[0.875rem]/[0.00875rem] font-light">
-          Market cap: <span className="text-[#6100FF]">{token.market_cap}</span>
+          {/* Market cap: <span className="text-[#6100FF]">{token.market_cap}</span> */}
         </dd>
       </div>
       <AspectRatio ratio={2 / 1.5}>
