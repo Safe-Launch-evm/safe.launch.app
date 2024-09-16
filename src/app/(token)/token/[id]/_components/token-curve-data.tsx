@@ -100,7 +100,7 @@ export function TokenStats({ token }: { token: Token }) {
   });
 
   useEffect(() => {
-    if (!walletClient || !token) return;
+    // if (!walletClient || !token) return;
 
     if (walletClient) {
       const safeLaunch = new SafeLaunch(walletClient, address);
