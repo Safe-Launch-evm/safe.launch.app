@@ -24,7 +24,7 @@ export async function TokenCurveData({ token }: { token: Token }) {
       <p className="text-[1rem]/[2rem] md:text-[1.125rem]/[2rem]">
         There are{' '}
         <HighlightText
-          value={toIntNumberFormat(Number(data?.marketStats?.circulatingSupplyInUsd))}
+          value={toIntNumberFormat(Number(data?.marketStats?.circulatingSupplyInToken))}
         />{' '}
         <HighlightText value={token?.symbol} /> available for sale through the bonding curve,
         with the current balance of{' '}
@@ -63,7 +63,7 @@ export async function TokenStats({ token }: { token: Token }) {
       />
       <TokenStatsCard
         title="Circulating Supply"
-        value={`${toIntNumberFormat(Number(data?.marketStats?.circulatingSupplyInUsd))} USD`}
+        value={`${toIntNumberFormat(Number(data?.marketStats?.circulatingSupplyInToken))} ${token?.symbol}`}
       />
     </section>
   );
