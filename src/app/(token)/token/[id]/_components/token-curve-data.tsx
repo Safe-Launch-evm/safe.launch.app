@@ -51,7 +51,7 @@ export async function TokenStats({ token }: { token: Token }) {
     <section className="grid w-full grid-cols-2 gap-3">
       <TokenStatsCard
         title="Price"
-        value={`${toIntNumberFormat(Number(data?.marketStats.priceInUsd))} USD`}
+        value={`${toIntNumberFormat(data?.marketStats.priceInUsd)} USD`}
       />
       <TokenStatsCard
         title="Marketcap"
@@ -59,11 +59,11 @@ export async function TokenStats({ token }: { token: Token }) {
       />
       <TokenStatsCard
         title="Liquidity"
-        value={`${toIntNumberFormat(Number(data?.marketStats.liquidityInUsd))} USD`}
+        value={`${toIntNumberFormat(data?.marketStats.liquidityInUsd)} USD`}
       />
       <TokenStatsCard
         title="Circulating Supply"
-        value={`${toIntNumberFormat(Number(data?.marketStats?.circulatingSupplyInToken))} ${token?.symbol}`}
+        value={`${toIntNumberFormat(data?.marketStats?.circulatingSupplyInToken)} ${token?.symbol}`}
       />
     </section>
   );
